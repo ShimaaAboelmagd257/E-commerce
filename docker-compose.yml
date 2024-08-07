@@ -1,0 +1,11 @@
+services:
+  dp:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+
+    restart : always
+    environment:
+      POSTGRES_USER: ecommerce
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ecommerce_database
