@@ -35,4 +35,4 @@ This is the backend of an E-commerce application built using Spring Boot. It pro
 Contributions are welcome! Please open an issue or submit a pull request for any improvements or features you'd like to add.
 License
 
-### For any inquiries or feedback, please reach out to your.shimaaaboelmagd257@gmail.com
+### For any inquiries or feedback, please reach out to shimaaaboelmagd257@gmail.com
