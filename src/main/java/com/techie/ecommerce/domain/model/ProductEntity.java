@@ -14,19 +14,18 @@ import java.util.List;
 @Builder
 @Entity(name = "Product")
 public class ProductEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
-
-    private String name;
+    private String title;
     private double price;
-    private int quantity;
+    private String description;
+    private CategoryEntity category;
+    private List<String> images;
 
-    // If you want to establish a relationship with OrderItemEntity
+    private int quantity;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItemEntity> orderItems;
-
     @ManyToOne
     @JoinColumn(name = "cart_id")
     private CartEntity cart;
