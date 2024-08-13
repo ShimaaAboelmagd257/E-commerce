@@ -3,11 +3,9 @@ package com.techie.ecommerce.service;
 import com.techie.ecommerce.domain.model.UserEntity;
 import com.techie.ecommerce.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,11 +15,22 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     @Override
+    public UserEntity save(UserEntity user) {
+        if (user.getPassword() == null || userRepository.existsByUsername(user.getUsername())) {
+            throw new IllegalArgumentException("Password cannot be null Or user is registered");
+        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
+    }
+   /* @Override
     public UserEntity save(UserEntity userEntity) {
         return userRepository.save(userEntity);
-    }
+    }*/
 
     @Override
     public Optional<UserEntity> getUserById(Long userId) {
@@ -47,7 +56,12 @@ public class UserServiceImpl implements UserService {
 
 
     }
-    public UserEntity loadUserByUserName(String username) {
+
+   /* @Override
+    public Optional<UserDetails> getUserByUserName(String userName) {
+        return Optional.empty();
+    }*/
+    /*public UserEntity loadUserByUserName(String username) {
         return userRepository.findByUsername(username);
     }
 
@@ -58,7 +72,7 @@ public class UserServiceImpl implements UserService {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
         return Optional.of(new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), new ArrayList<>()));
-    }
+    }*/
 
 
 }

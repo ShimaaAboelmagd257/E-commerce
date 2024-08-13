@@ -7,6 +7,7 @@ import com.techie.ecommerce.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,13 +23,19 @@ public class UserController {
 
     @Autowired
     private Mapper<UserEntity, UserDto> userMapper;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @PostMapping
     public ResponseEntity<UserDto> createUser (@RequestBody UserDto userDto){
         UserEntity userEntity = userMapper.mapFrom(userDto);
-        UserEntity savedUser = userService.save(userEntity);
-        UserDto responseDto = userMapper.mapTo(savedUser);
-        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+        if(userEntity.getId() ==null ) {
+            userEntity.setPassword(passwordEncoder.encode("password123")); // Hashing the password
+            UserEntity savedUser = userService.save(userEntity);
+            UserDto responseDto = userMapper.mapTo(savedUser);
+            return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+        }
+           return null;
     }
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> getUser(@PathVariable Long userId){

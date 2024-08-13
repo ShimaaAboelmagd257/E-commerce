@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthenticationController {
 
-    @Autowired
+/*    @Autowired
     private AuthenticationService service;
     @Autowired
      private Mapper<UserEntity, UserDto> userMapper;
@@ -35,7 +35,7 @@ public class AuthenticationController {
     public ResponseEntity<Void> logout(){
         service.logout();
         return ResponseEntity.ok().build();
-    }
+    }*/
 
 
 }

@@ -19,6 +19,10 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository productRepository;
     private RestTemplate restTemplate;
     private final String apiUrl = "https://api.escuelajs.co/api/v1/products" ;
+    @Autowired
+    public ProductServiceImpl(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @Override
     public List<ProductDto> fetchAllproducts(){

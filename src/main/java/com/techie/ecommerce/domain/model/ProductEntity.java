@@ -20,6 +20,8 @@ public class ProductEntity {
     private String title;
     private double price;
     private String description;
+    @ManyToOne
+    @JoinColumn(name = "category_id") // name of the foreign key column in the product table
     private CategoryEntity category;
     private List<String> images;
 

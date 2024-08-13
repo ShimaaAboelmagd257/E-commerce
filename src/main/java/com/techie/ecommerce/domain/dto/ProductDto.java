@@ -3,10 +3,7 @@ package com.techie.ecommerce.domain.dto;
 import com.techie.ecommerce.domain.model.CartEntity;
 import com.techie.ecommerce.domain.model.CategoryEntity;
 import com.techie.ecommerce.domain.model.OrderItemEntity;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,4 +26,5 @@ public class ProductDto {
     private int quantity;
     private List<OrderItemEntity> orderItems;
     private CartEntity cart;
+
 }
