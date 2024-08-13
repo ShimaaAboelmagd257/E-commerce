@@ -29,7 +29,7 @@ public class CartServiceImpl implements CartService {
     public CartEntity addToCart(Long cartId, ProductDto productDto) {
         CartEntity cart = cartRepository.findById(cartId).orElse(null);
         if(cart != null){
-            ProductEntity product = productRepository.findById(productDto.getProductId()).orElse(null);
+            ProductEntity product = productRepository.findById(productDto.getId()).orElse(null);
             if(product != null){
                 cart.getProductEntities().add(product);
                 return cartRepository.save(cart);

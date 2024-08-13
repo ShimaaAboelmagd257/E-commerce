@@ -41,9 +41,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
        } else {
            log.info("JWT found: " + jwt);
        }
-
        if (StringUtils.hasText(jwt) && jwtTokenProvider.verifyToken(jwt)) {
-
            Authentication auth = jwtTokenProvider.getAuthentication(jwt);
            SecurityContextHolder.getContext().setAuthentication(auth);
            log.info("Authentication set in SecurityContextHolder.");
@@ -55,8 +53,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
    }
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
-            log.info("doFilterInternal - getJwtFromRequest");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            log.info("doFilterInternal - getJwtFromRequest - token passed ");
             return bearerToken.substring(7);
         }
         return null;

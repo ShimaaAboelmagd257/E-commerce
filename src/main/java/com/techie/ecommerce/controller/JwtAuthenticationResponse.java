@@ -10,4 +10,7 @@ public class JwtAuthenticationResponse {
     public String getAccessToken() {
         return accessToken;
     }
+    public void getAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
 }

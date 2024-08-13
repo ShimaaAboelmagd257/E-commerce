@@ -1,5 +1,6 @@
 package com.techie.ecommerce.controller;
 
+import com.techie.ecommerce.domain.model.LoginRequest;
 import com.techie.ecommerce.domain.model.UserEntity;
 import com.techie.ecommerce.security.JWTAuthenticationFilter;
 import com.techie.ecommerce.security.JwtTokenProvider;
@@ -26,24 +27,17 @@ public class AuthController {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
     }
-
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@RequestBody UserEntity loginRequest) {
-        // Perform authentication
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
                         loginRequest.getPassword()
                 )
         );
-
-        // Set the authentication in the SecurityContext
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        // Generate the token
         String jwt = jwtTokenProvider.generateToken(loginRequest.getUsername());
-        log.info("Generated JWT Token: {}"+ jwt);
-        // Return the token in the response
+        log.info("Generated JWT Token: "+ jwt);
         return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
     }
 }

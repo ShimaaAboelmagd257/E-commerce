@@ -1,5 +1,7 @@
 package com.techie.ecommerce.security;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -13,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class UserDetailsServiceConfig {
+    private static final Log log = LogFactory.getLog(UserDetailsServiceConfig.class);
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -32,6 +35,7 @@ public class UserDetailsServiceConfig {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService());
         provider.setPasswordEncoder(passwordEncoder());
+        log.info("authenticationProvider"  );
         return provider;
     }
 }

@@ -3,10 +3,17 @@ package com.techie.ecommerce.controller;
 import com.techie.ecommerce.domain.dto.UserDto;
 import com.techie.ecommerce.domain.model.UserEntity;
 import com.techie.ecommerce.mappers.Mapper;
+import com.techie.ecommerce.security.JwtTokenProvider;
 import com.techie.ecommerce.service.UserService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +24,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    private static final Log log = LogFactory.getLog(AuthController.class);
 
     @Autowired
     private UserService userService;
@@ -26,17 +34,22 @@ public class UserController {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+
     @PostMapping
-    public ResponseEntity<UserDto> createUser (@RequestBody UserDto userDto){
+    public ResponseEntity<?> createUser(@RequestBody UserDto userDto) {
         UserEntity userEntity = userMapper.mapFrom(userDto);
-        if(userEntity.getId() ==null ) {
-            userEntity.setPassword(passwordEncoder.encode("password123")); // Hashing the password
+        log.info("Creating user with username: {}"+ userEntity.getUsername());
+
+        if (userEntity.getId() == null) {
+//          userEntity.setPassword(passwordEncoder.encode(userDto.getPassword())); // Hashing the password
             UserEntity savedUser = userService.save(userEntity);
             UserDto responseDto = userMapper.mapTo(savedUser);
             return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
         }
-           return null;
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> getUser(@PathVariable Long userId){
          Optional<UserEntity> userEntity = userService.getUserById(userId);

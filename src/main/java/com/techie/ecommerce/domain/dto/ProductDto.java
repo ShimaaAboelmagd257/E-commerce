@@ -17,11 +17,11 @@ import java.util.List;
 @Builder
 public class ProductDto {
 
-    private Long productId;
+    private Long id;
     private String title;
     private double price;
     private String description;
-    private String category;
+    private CategoryDto category;
     private List<String> images;
     private int quantity;
     private List<OrderItemEntity> orderItems;

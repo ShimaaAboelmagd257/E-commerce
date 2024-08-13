@@ -47,9 +47,9 @@ public class SecurityFilterChainConfig   {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/api/auth/login").permitAll()
-                                .requestMatchers("/api/public/**").permitAll()
                                 .requestMatchers("/user/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/products").permitAll() // Permit GET requests to /api/products
+                                //.requestMatchers(HttpMethod.GET, "/api/products").permitAll() // Permit GET requests to /api/products
+                                .anyRequest().authenticated()
                 ).sessionManagement( session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 ).authenticationProvider(authenticationProvider)

@@ -9,12 +9,12 @@ public class UserEntityUtil {
     public static UserEntity createTestUser() {
         return UserEntity.builder()
                 .username("shemoii")
-                .password("27915555") // Note: In a real application, passwords should be encrypted.
+                .password("279155")
                 .email("testuser@example.com")
                 .firstName("Test")
                 .lastName("User")
-                .orders(Collections.emptyList()) // Empty list for simplicity, modify as needed
-                .carts(Collections.emptyList())  // Empty list for simplicity, modify as needed
+                .orders(Collections.emptyList())
+                .carts(Collections.emptyList())  
                 .build();
     }
 }
