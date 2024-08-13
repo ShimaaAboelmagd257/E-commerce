@@ -1,8 +1,7 @@
 package com.techie.ecommerce.controller;
 
 import com.techie.ecommerce.domain.model.LoginRequest;
-import com.techie.ecommerce.domain.model.UserEntity;
-import com.techie.ecommerce.security.JWTAuthenticationFilter;
+import com.techie.ecommerce.security.JwtAuthenticationResponse;
 import com.techie.ecommerce.security.JwtTokenProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

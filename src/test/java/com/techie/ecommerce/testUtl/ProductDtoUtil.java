@@ -1,5 +1,6 @@
 package com.techie.ecommerce.testUtl;
 
+import com.techie.ecommerce.domain.dto.CategoryDto;
 import com.techie.ecommerce.domain.dto.ProductDto;
 import com.techie.ecommerce.domain.model.CartEntity;
 import com.techie.ecommerce.domain.model.CategoryEntity;
@@ -7,22 +8,52 @@ import com.techie.ecommerce.domain.model.OrderItemEntity;
 import com.techie.ecommerce.domain.model.ProductEntity;
 
 import java.util.Arrays;
+import java.util.Random;
 
 public final class ProductDtoUtil {
 
-    public static ProductDto productDto(){
+    private static final Random RANDOM = new Random();
+
+    // Method to generate a sample ProductDto
+    public static ProductDto createSampleProductDto() {
         return ProductDto.builder()
-                .cart(CartEntity.builder().cartId(1L).build()) // Example CartEntity
-                .price(29.99)
+                .id((long) RANDOM.nextInt(1000))
                 .title("Sample Product")
+                .price(RANDOM.nextDouble() * 100)
                 .description("This is a sample product description.")
-                .images(Arrays.asList("image1.jpg", "image2.jpg"))
-                .category("Electronics") // Example CategoryEntity
-                .orderItems(Arrays.asList(
-                        OrderItemEntity.builder().product(null).quantity(2).build(),
-                        OrderItemEntity.builder().product(null).quantity(1).build()
+                .category(createSampleCategoryDto())
+                .images(Arrays.asList(
+                        "https://placeimg.com/640/480/any?r=" + RANDOM.nextDouble(),
+                        "https://placeimg.com/640/480/any?r=" + RANDOM.nextDouble(),
+                        "https://placeimg.com/640/480/any?r=" + RANDOM.nextDouble()
                 ))
-                .quantity(10)
+                .quantity(RANDOM.nextInt(100))
+                .orderItems(Arrays.asList(createSampleOrderItemEntity()))
+                .cart(createSampleCartEntity())
                 .build();
     }
+
+    // Method to generate a sample CategoryDto
+    public static CategoryDto createSampleCategoryDto() {
+        return CategoryDto.builder()
+                .id((long) RANDOM.nextInt(100))
+                .name("Sample Category")
+                .image("https://placeimg.com/640/480/any?r=" + RANDOM.nextDouble())
+                .build();
+    }
+
+    // Method to generate a sample OrderItemEntity (replace with actual fields)
+    public static OrderItemEntity createSampleOrderItemEntity() {
+        OrderItemEntity item = new OrderItemEntity();
+        // Set fields for OrderItemEntity
+        return item;
+    }
+
+    // Method to generate a sample CartEntity (replace with actual fields)
+    public static CartEntity createSampleCartEntity() {
+        CartEntity cart = new CartEntity();
+        // Set fields for CartEntity
+        return cart;
+    }
 }
+

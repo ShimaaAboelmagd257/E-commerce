@@ -29,7 +29,7 @@ public class ProductServiceImplTest {
 
     @Test
     public void testFetchAllProducts(){
-        ProductDto[] mockProducts = new ProductDto[]{ProductDtoUtil.productDto()};
+        ProductDto[] mockProducts = new ProductDto[]{ProductDtoUtil.createSampleProductDto()};
         ResponseEntity<ProductDto[]> responseEntity = new ResponseEntity<>(mockProducts, HttpStatus.OK);
         Mockito.when(restTemplate.getForEntity(apiUrl,ProductDto[].class)).thenReturn(responseEntity);
         List<ProductDto> productDtos = productService.fetchAllproducts();
@@ -40,7 +40,7 @@ public class ProductServiceImplTest {
     @Test
     public void testFetchProductsById(){
         Long productId = 1L;
-        ProductDto mockProducts = ProductDtoUtil.productDto();
+        ProductDto mockProducts = ProductDtoUtil.createSampleProductDto();
         ResponseEntity<ProductDto> responseEntity = new ResponseEntity<>(mockProducts, HttpStatus.OK);
         Mockito.when(restTemplate.getForEntity(apiUrl + "/" + productId,ProductDto.class)).thenReturn(responseEntity);
         ProductDto productDto = productService.fetchProductById(productId);

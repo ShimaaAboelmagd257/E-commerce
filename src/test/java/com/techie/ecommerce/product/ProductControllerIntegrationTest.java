@@ -1,6 +1,5 @@
 package com.techie.ecommerce.product;
 
-import com.techie.ecommerce.controller.JwtAuthenticationResponse;
 import com.techie.ecommerce.domain.dto.ProductDto;
 import com.techie.ecommerce.domain.model.UserEntity;
 import com.techie.ecommerce.repository.UserRepository;
@@ -30,13 +29,7 @@ public class ProductControllerIntegrationTest {
     UserRepository userRepository;
     private String jwtToken;
 
- /*   private String getJwtToken() {
-        // Assuming you have a login endpoint that returns a JWT token
-        String loginUrl = "/api/auth/login";
-        LoginRequest loginRequest = new LoginRequest("username", "password");
-        ResponseEntity<JwtAuthenticationResponse> response = restTemplate.postForEntity(loginUrl, loginRequest, JwtAuthenticationResponse.class);
-        return response.getBody().getAccessToken();
-    }*/
+
     @BeforeEach
     public void setUp() {
         // Create and save a test user
@@ -66,12 +59,6 @@ public class ProductControllerIntegrationTest {
         assertNotNull(response.getBody());
         assertTrue(response.getBody().length > 0);
     }
-    /*@Test
-    public void getAllProductsTest(){
-        ResponseEntity<ProductDto[]> response = restTemplate.getForEntity("/api/products", ProductDto[].class);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertTrue(response.getBody().length > 0);
-    }*/
+
 
 }

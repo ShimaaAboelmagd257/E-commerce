@@ -1,4 +1,4 @@
-package com.techie.ecommerce.controller;
+package com.techie.ecommerce.security;
 
 public class JwtAuthenticationResponse {
     private String accessToken;
