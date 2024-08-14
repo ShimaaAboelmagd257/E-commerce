@@ -34,7 +34,7 @@ public class ProductServiceImpl implements ProductService {
         return Arrays.asList(response.getBody());
     }
     @Override
-    public ProductDto fetchProductById(Long id) {
+    public ProductDto fetchProductById(Integer id) {
         String idUrl = apiUrl + "/" + id;
         ResponseEntity<ProductDto> response = restTemplate.getForEntity(idUrl, ProductDto.class);
         return response.getBody();
@@ -47,12 +47,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public boolean isExists(Long id) {
+    public boolean isExists(Integer id) {
         return productRepository.existsById(id);
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(Integer id) {
         productRepository.deleteById(id);
         String deleteUrl = apiUrl + "/" + id;
         restTemplate.delete(deleteUrl);
@@ -86,7 +86,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductEntity updateProduct(Long id, ProductEntity updateProduct) {
+    public ProductEntity updateProduct(Integer id, ProductEntity updateProduct) {
         String updateUrl = apiUrl + "/" + id;
         restTemplate.put(updateUrl, updateProduct);
         return productRepository.save(updateProduct);

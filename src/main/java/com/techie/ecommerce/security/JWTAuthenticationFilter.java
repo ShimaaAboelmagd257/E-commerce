@@ -16,7 +16,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
-//This filter intercepts incoming requests, extracts the JWT token, validates it, and sets the authentication context.
 @Component
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private static final Log log = LogFactory.getLog(JWTAuthenticationFilter.class);

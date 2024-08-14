@@ -9,10 +9,10 @@ public interface ProductService {
 
 
     List<ProductDto> fetchAllproducts();
-    ProductDto fetchProductById(Long id);
+    ProductDto fetchProductById(Integer id);
     ProductEntity save(ProductEntity product);
-    boolean isExists(Long id);
-    void deleteById(Long id);
+    boolean isExists(Integer id);
+    void deleteById(Integer id);
 
     List<ProductDto> filterProducts(String title,
                                     Double price,
@@ -22,5 +22,5 @@ public interface ProductService {
                                     Integer limit,
                                     Integer offset);
 
-    ProductEntity updateProduct(Long id,ProductEntity updateProduct);
+    ProductEntity updateProduct(Integer id,ProductEntity updateProduct);
 }

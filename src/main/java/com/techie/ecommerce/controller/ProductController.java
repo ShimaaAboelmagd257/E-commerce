@@ -38,12 +38,12 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ProductDto getProductById(@PathVariable Long id){
+    public ProductDto getProductById(@PathVariable Integer id){
         return service.fetchProductById(id);
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<?> updateProduct(@PathVariable Long id , @RequestBody ProductDto productDto){
+    public ResponseEntity<?> updateProduct(@PathVariable Integer id , @RequestBody ProductDto productDto){
         if(!service.isExists(id)){
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
@@ -54,7 +54,7 @@ public class ProductController {
         return new ResponseEntity(dto,HttpStatus.OK);
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id){
+    public ResponseEntity<Void> deleteProduct(@PathVariable Integer id){
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }

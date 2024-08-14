@@ -17,7 +17,7 @@ public final class ProductDtoUtil {
     // Method to generate a sample ProductDto
     public static ProductDto createSampleProductDto() {
         return ProductDto.builder()
-                .id((long) RANDOM.nextInt(1000))
+                .id((int) RANDOM.nextInt(1000))
                 .title("Sample Product")
                 .price(RANDOM.nextDouble() * 100)
                 .description("This is a sample product description.")
@@ -36,7 +36,7 @@ public final class ProductDtoUtil {
     // Method to generate a sample CategoryDto
     public static CategoryDto createSampleCategoryDto() {
         return CategoryDto.builder()
-                .id((long) RANDOM.nextInt(100))
+                .id((int) RANDOM.nextInt(100))
                 .name("Sample Category")
                 .image("https://placeimg.com/640/480/any?r=" + RANDOM.nextDouble())
                 .build();

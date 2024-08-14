@@ -39,7 +39,7 @@ public class ProductServiceImplTest {
 
     @Test
     public void testFetchProductsById(){
-        Long productId = 1L;
+        Integer productId = 1;
         ProductDto mockProducts = ProductDtoUtil.createSampleProductDto();
         ResponseEntity<ProductDto> responseEntity = new ResponseEntity<>(mockProducts, HttpStatus.OK);
         Mockito.when(restTemplate.getForEntity(apiUrl + "/" + productId,ProductDto.class)).thenReturn(responseEntity);

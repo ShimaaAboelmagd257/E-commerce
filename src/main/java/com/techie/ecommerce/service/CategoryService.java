@@ -9,15 +9,15 @@ import java.util.List;
 public interface CategoryService {
     CategoryEntity createCategory(CategoryEntity category);
 
-    List<ProductDto> getProductsByCategory(Long categoryId);
+    List<ProductDto> getProductsByCategory(Integer categoryId);
 
     List<CategoryDto> fetchAllCategories();
 
-    CategoryDto fetchCategoryById(Long id);
+    CategoryDto fetchCategoryById(Integer id);
 
-    boolean isExists(Long id);
+    boolean isExists(Integer id);
 
-    void deleteById(Long id);
+    void deleteById(Integer id);
 
-    CategoryEntity updateCategory(Long id ,CategoryEntity updateCategory);
+    CategoryEntity updateCategory(Integer id ,CategoryEntity updateCategory);
 }

@@ -38,32 +38,6 @@ public class JwtTokenProvider {
             return false;
         }
     }
-    /*public static String generateToken(String username) {
-        Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
-        String token = JWT.create()
-                .withSubject(username)
-                .sign(algorithm);
-        log.info("generated Token: " +token );
-        return JWT.create()
-                .withSubject(username)
-                .sign(algorithm);
-    }
-
-    public Boolean verifyToken(String token) {
-        try {
-            Jwts
-                    .parser()
-                    .setSigningKey(SECRET_KEY)
-                    .build()
-                    .parseClaimsJws(token);
-            log.info("verifyToken: TRUE"  );
-            return true;
-        } catch (Exception e) {
-            log.info("verifyToken: FALSE because: " + e.getMessage() );
-            return false;
-        }
-    }*/
-
     public Authentication getAuthentication(String token) {
         log.info("getAuthentication for token : " + token );
         Claims claims = Jwts.parser()

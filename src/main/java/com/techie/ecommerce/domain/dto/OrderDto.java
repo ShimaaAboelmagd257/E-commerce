@@ -17,11 +17,8 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class OrderDto {
-
     private Long orderId;
     private UserEntity user;
-
     private List<OrderItemEntity> orderItems;
-
     private CartEntity cart;
 }

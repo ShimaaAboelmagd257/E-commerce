@@ -30,7 +30,7 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public List<ProductDto> getProductsByCategory(Long categoryId) {
+    public List<ProductDto> getProductsByCategory(Integer categoryId) {
         String url = apiUrl + "/" + categoryId + "/products";
         ResponseEntity<ProductDto[]> response = restTemplate.getForEntity(url, ProductDto[].class);
         return Arrays.asList(response.getBody());
@@ -44,26 +44,26 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public CategoryDto fetchCategoryById(Long id) {
+    public CategoryDto fetchCategoryById(Integer id) {
          String idUrl = apiUrl + "/" + id;
         ResponseEntity<CategoryDto> response = restTemplate.getForEntity(idUrl, CategoryDto.class);
         return response.getBody();
     }
 
     @Override
-    public boolean isExists(Long id) {
+    public boolean isExists(Integer id) {
         return repository.existsById(id);
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(Integer id) {
         repository.deleteById(id);
         String deleteUrl = apiUrl + "/" + id;
         restTemplate.delete(deleteUrl);
     }
 
     @Override
-    public CategoryEntity updateCategory(Long id, CategoryEntity updateCategory) {
+    public CategoryEntity updateCategory(Integer id, CategoryEntity updateCategory) {
         String updateUrl = apiUrl + "/" + id;
         restTemplate.put(updateUrl, updateCategory);
         return repository.save(updateCategory);

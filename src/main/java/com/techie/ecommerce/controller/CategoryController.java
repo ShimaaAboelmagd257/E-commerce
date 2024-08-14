@@ -31,7 +31,7 @@ public class CategoryController {
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
     @GetMapping("/{categoryId}/products")
-    public ResponseEntity<List<ProductDto>> getProductsByCategory(@PathVariable Long categoryId) {
+    public ResponseEntity<List<ProductDto>> getProductsByCategory(@PathVariable("categoryId")  Integer categoryId) {
         List<ProductDto> products = service.getProductsByCategory(categoryId);
         return ResponseEntity.ok(products);
     }
@@ -41,12 +41,12 @@ public class CategoryController {
     }
 
     @GetMapping("/{categoryId}")
-    public CategoryDto getCategoryById(@PathVariable Long id){
+    public CategoryDto getCategoryById(@PathVariable("categoryId")  Integer id){
         return service.fetchCategoryById(id);
     }
 
     @PutMapping(path = "/{categoryId}")
-    public ResponseEntity<?> updateCategory(@PathVariable Long id , @RequestBody CategoryDto categoryDto){
+    public ResponseEntity<?> updateCategory(@PathVariable("categoryId")  Integer id , @RequestBody CategoryDto categoryDto){
         if(!service.isExists(id)){
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
@@ -57,7 +57,7 @@ public class CategoryController {
         return new ResponseEntity(dto,HttpStatus.OK);
     }
     @DeleteMapping("/{categoryId}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable Long id){
+    public ResponseEntity<Void> deleteCategory(@PathVariable("categoryId")  Integer id){
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
