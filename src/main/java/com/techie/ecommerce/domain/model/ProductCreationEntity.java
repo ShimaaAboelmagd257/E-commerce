@@ -1,5 +1,8 @@
 package com.techie.ecommerce.domain.model;
 
+import com.sun.istack.NotNull;
+import com.techie.ecommerce.domain.dto.CategoryDto;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,28 +11,23 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Entity
+@Table(name = "products")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity(name = "Product")
-public class ProductEntity {
+public class ProductCreationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer productId;
+    private Integer id;
+
     private String title;
     private double price;
+    @Nullable
     private String description;
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-   private CategoryEntity category;
+    private Integer categoryId;
+    @Nullable
+    @ElementCollection
     private List<String> images;
-
-    private int quantity;
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItemEntity> orderItems;
-    @ManyToOne
-    @JoinColumn(name = "cart_id")
-    private CartEntity cart;
-
 }

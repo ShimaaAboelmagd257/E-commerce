@@ -30,9 +30,9 @@ public class CategoryController {
         CategoryDto dto = mapper.mapTo(savedCategory);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
-    @GetMapping("/{categoryId}/products")
-    public ResponseEntity<List<ProductDto>> getProductsByCategory(@PathVariable("categoryId")  Integer categoryId) {
-        List<ProductDto> products = service.getProductsByCategory(categoryId);
+    @GetMapping("/{id}/products")
+    public ResponseEntity<List<ProductDto>> getProductsByCategory(@PathVariable("id")  Integer id) {
+        List<ProductDto> products = service.getProductsByCategory(id);
         return ResponseEntity.ok(products);
     }
     @GetMapping
@@ -40,13 +40,13 @@ public class CategoryController {
         return service.fetchAllCategories();
     }
 
-    @GetMapping("/{categoryId}")
-    public CategoryDto getCategoryById(@PathVariable("categoryId")  Integer id){
+    @GetMapping("/{id}")
+    public CategoryDto getCategoryById(@PathVariable("id")  Integer id){
         return service.fetchCategoryById(id);
     }
 
-    @PutMapping(path = "/{categoryId}")
-    public ResponseEntity<?> updateCategory(@PathVariable("categoryId")  Integer id , @RequestBody CategoryDto categoryDto){
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<?> updateCategory(@PathVariable("id")  Integer id , @RequestBody CategoryDto categoryDto){
         if(!service.isExists(id)){
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
@@ -56,8 +56,8 @@ public class CategoryController {
         CategoryDto dto = mapper.mapTo(category);
         return new ResponseEntity(dto,HttpStatus.OK);
     }
-    @DeleteMapping("/{categoryId}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable("categoryId")  Integer id){
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable("id")  Integer id){
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }

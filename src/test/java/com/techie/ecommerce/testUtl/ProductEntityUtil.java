@@ -17,7 +17,7 @@ public final class ProductEntityUtil {
                     .title("Sample Product")
                     .description("This is a sample product description.")
                     .images(Arrays.asList("image1.jpg", "image2.jpg"))
-                    .category(CategoryEntity.builder().name("Electronics").build()) // Example CategoryEntity
+                 //   .category(CategoryEntity.builder().name("Electronics").build()) // Example CategoryEntity
                     .orderItems(Arrays.asList(
                             OrderItemEntity.builder().product(null).quantity(2).build(),
                             OrderItemEntity.builder().product(null).quantity(1).build()

@@ -1,5 +1,6 @@
 package com.techie.ecommerce.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.techie.ecommerce.domain.model.CartEntity;
 import com.techie.ecommerce.domain.model.CategoryEntity;
 import com.techie.ecommerce.domain.model.OrderItemEntity;
@@ -26,5 +27,9 @@ public class ProductDto {
     private int quantity;
     private List<OrderItemEntity> orderItems;
     private CartEntity cart;
+   /* @JsonProperty("categoryId")
+    public Integer getCategoryId() {
+        return category != null ? category.getCategoryId() : null;
+    }*/
 
 }
