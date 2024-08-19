@@ -1,4 +1,4 @@
-package com.techie.ecommerce.product;
+package com.techie.ecommerce.testUtl;
 
 import com.techie.ecommerce.domain.model.UserEntity;
 

@@ -1,19 +1,15 @@
-package com.techie.ecommerce.controller;
+package com.techie.ecommerce.controller.apiImpl;
 
+import com.techie.ecommerce.controller.api.UserApi;
 import com.techie.ecommerce.domain.dto.UserDto;
 import com.techie.ecommerce.domain.model.UserEntity;
 import com.techie.ecommerce.mappers.Mapper;
-import com.techie.ecommerce.security.JwtTokenProvider;
 import com.techie.ecommerce.service.UserService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +19,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/user")
-public class UserController {
+public class UserController implements UserApi {
     private static final Log log = LogFactory.getLog(AuthController.class);
 
     @Autowired
@@ -34,7 +30,7 @@ public class UserController {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
-
+@Override
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody UserDto userDto) {
         UserEntity userEntity = userMapper.mapFrom(userDto);
@@ -49,9 +45,10 @@ public class UserController {
 
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+    @Override
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> getUser(@PathVariable Long userId){
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long userId){
          Optional<UserEntity> userEntity = userService.getUserById(userId);
         return userEntity.map( user -> {
            UserDto responseDto = userMapper.mapTo(user);
@@ -59,6 +56,8 @@ public class UserController {
 
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+    @Override
+
     @GetMapping
     public  ResponseEntity<List<UserDto>> getAllUsers(){
          List<UserEntity> userEntities = userService.getAllUsers();
@@ -68,6 +67,8 @@ public class UserController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(userDtos);
     }
+    @Override
+
     @PutMapping(path = "/{userId}")
     public ResponseEntity<UserDto> updateUser(
             @PathVariable("userId") Long userId,
@@ -84,6 +85,7 @@ public class UserController {
                 userMapper.mapTo(user),
                 HttpStatus.OK);
     }
+    @Override
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId){

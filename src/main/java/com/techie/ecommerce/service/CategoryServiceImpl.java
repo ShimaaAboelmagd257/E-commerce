@@ -4,9 +4,13 @@ import com.techie.ecommerce.domain.dto.CategoryDto;
 import com.techie.ecommerce.domain.dto.ProductDto;
 import com.techie.ecommerce.domain.model.CategoryEntity;
 import com.techie.ecommerce.repository.CategoryRepository;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -14,6 +18,7 @@ import java.util.List;
 
 @Service
 public class CategoryServiceImpl implements CategoryService{
+    private static final Log log = LogFactory.getLog(CategoryServiceImpl.class);
 
     @Autowired
     CategoryRepository repository;
@@ -26,7 +31,24 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public CategoryEntity createCategory(CategoryEntity category) {
-        return repository.save(category);
+        repository.save(category);
+          ResponseEntity<CategoryEntity> response = restTemplate.postForEntity(apiUrl, category, CategoryEntity.class);
+        if (response.getStatusCode() == HttpStatus.CREATED && response.getBody() != null) {
+            CategoryEntity categoryEntity = response.getBody();
+
+            log.info("API Response: " + categoryEntity);
+            if (categoryEntity.getId() == null) {
+                log.error("Received null id from API response");
+                throw new RuntimeException("Failed to save category to external API");
+            }
+
+            log.info("Saved category with Id " + categoryEntity.getId());
+            return categoryEntity;
+        } else {
+            log.error("Failed to save category to external API");
+            throw new RuntimeException("Failed to save category to external API");
+        }
+           // return repository.save(category);
     }
 
     @Override
@@ -63,9 +85,14 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public CategoryEntity updateCategory(Integer id, CategoryEntity updateCategory) {
+    public void updateCategory(Integer id, CategoryEntity updateCategory) {
         String updateUrl = apiUrl + "/" + id;
-        restTemplate.put(updateUrl, updateCategory);
-        return repository.save(updateCategory);
+        try {
+            restTemplate.put(updateUrl, updateCategory);
+            log.info("Category updated remotely with ID: {}"+ id);
+        } catch (HttpClientErrorException e) {
+            log.error("Error updating Category: {}"+ e.getMessage());
+            throw new RuntimeException("Failed to update Category: " + e.getMessage(), e);
+        }
     }
 }

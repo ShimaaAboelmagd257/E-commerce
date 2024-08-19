@@ -1,5 +1,6 @@
-package com.techie.ecommerce.controller;
+package com.techie.ecommerce.controller.apiImpl;
 
+import com.techie.ecommerce.controller.api.CartApi;
 import com.techie.ecommerce.domain.dto.CartDto;
 import com.techie.ecommerce.domain.dto.ProductDto;
 import com.techie.ecommerce.domain.model.CartEntity;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/carts")
-public class CartController {
+public class CartController implements CartApi {
 
     @Autowired
     private CartService cartService;
@@ -26,6 +27,7 @@ public class CartController {
     @Autowired
     private Mapper<ProductEntity , ProductDto> productMapper;
 
+    @Override
     @PostMapping
     public ResponseEntity<CartDto> createCart(@RequestBody CartDto cartDto){
         CartEntity cartEntity =cartMapper.mapFrom(cartDto);
@@ -33,7 +35,7 @@ public class CartController {
         CartDto dto = cartMapper.mapTo(savedCart);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
-
+    @Override
     @PostMapping(path = "/{cartId}/products")
     public ResponseEntity<CartDto> addToCart(@PathVariable Long cartId, @RequestBody ProductDto productDto){
 
@@ -43,13 +45,14 @@ public class CartController {
 
     }
 
+    @Override
     @DeleteMapping(path = "/{cartId}/products/{productId}")
     public ResponseEntity<ProductDto> removeFromCart(@PathVariable Long cartId, @PathVariable Long productId){
         cartService.delete(cartId,productId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-
+    @Override
     @GetMapping(path = "/{cartId}/products/{productId}")
     public ResponseEntity<ProductDto> getCartItem (@PathVariable Long cartId , @PathVariable Long productId){
         Optional<ProductEntity> productEntity = cartService.getCartItem(cartId , productId);
@@ -59,7 +62,7 @@ public class CartController {
 
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-
+    @Override
     @GetMapping(path = "/{cartId}/products")
     public ResponseEntity<List<ProductDto>> getCartItems(@PathVariable Long cartId){
         List<ProductEntity> productEntities = cartService.getCartItems(cartId);
@@ -69,13 +72,13 @@ public class CartController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(productDtos);
     }
-
+    @Override
     @DeleteMapping("/{cartId}/items")
     public ResponseEntity<Void> removeAllCartItems(@PathVariable Long cartId) {
         cartService.removeAllCartItems(cartId);
         return ResponseEntity.noContent().build();
     }
-
+    @Override
     @GetMapping("/{cartId}/total")
     public ResponseEntity<Double> getCartTotalPrice(@PathVariable Long cartId) {
         double total = cartService.getCartTotalPrice(cartId);

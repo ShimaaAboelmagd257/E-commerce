@@ -1,6 +1,7 @@
 package com.techie.ecommerce.service;
 
 import com.techie.ecommerce.domain.dto.ProductDto;
+import com.techie.ecommerce.domain.dto.ProductFilter;
 import com.techie.ecommerce.domain.model.ProductCreationEntity;
 import com.techie.ecommerce.repository.ProductCreateRepository;
 import com.techie.ecommerce.repository.ProductRepository;
@@ -89,14 +90,7 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-   /* @Override
-    public ProductEntity save(ProductEntity product) {
-        if (product.getCategory() == null || product.getCategory().getId() == null) {
-            throw new IllegalArgumentException("Product category ID must be provided");
-        }
-       restTemplate.postForEntity(apiUrl,product,ProductDto.class);
-        return productRepository.save(product);
-    }*/
+
 
     @Override
     public boolean isExists(Integer id) {
@@ -111,28 +105,29 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> filterProducts(String title, Double price, Double priceMin, Double priceMax, Long categoryId, Integer limit, Integer offset) {
+    public List<ProductDto> filterProducts(ProductFilter productFilter) {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(apiUrl);
 
-        if (title != null) {
-            uriBuilder.queryParam("title", title);
+        if (productFilter.getTitle() != null) {
+            uriBuilder.queryParam("title", productFilter.getTitle());
         }
-        if (price != null) {
-            uriBuilder.queryParam("price", price);
+        if (productFilter.getPrice() != null) {
+            uriBuilder.queryParam("price", productFilter.getPrice());
         }
-        if (priceMin != null && priceMax != null) {
-            uriBuilder.queryParam("price_min", priceMin);
-            uriBuilder.queryParam("price_max", priceMax);
+        if (productFilter.getPrice_min()!= null && productFilter.getPrice_max() != null) {
+            uriBuilder.queryParam("price_min", productFilter.getPrice_min());
+            uriBuilder.queryParam("price_max", productFilter.getPrice_max());
         }
-        if (categoryId != null) {
-            uriBuilder.queryParam("categoryId", categoryId);
+        if (productFilter.getCategoryId() != null) {
+            uriBuilder.queryParam("categoryId", productFilter.getCategoryId());
         }
-        if (limit != null) {
-            uriBuilder.queryParam("limit", limit);
+        if (productFilter.getLimit() != null) {
+            uriBuilder.queryParam("limit", productFilter.getLimit());
         }
-        if (offset != null) {
-            uriBuilder.queryParam("offset", offset);
+        if (productFilter.getOffset() != null) {
+            uriBuilder.queryParam("offset", productFilter.getOffset());
         }
+
         ResponseEntity<ProductDto[]> response = restTemplate.getForEntity(uriBuilder.toUriString(), ProductDto[].class);
         return Arrays.asList(response.getBody());
     }

@@ -1,11 +1,12 @@
-package com.techie.ecommerce.controller;
+package com.techie.ecommerce.controller.apiImpl;
 
+import com.techie.ecommerce.controller.api.ProductApi;
 import com.techie.ecommerce.domain.dto.ProductCreation;
 import com.techie.ecommerce.domain.dto.ProductDto;
+import com.techie.ecommerce.domain.dto.ProductFilter;
 import com.techie.ecommerce.domain.model.ProductCreationEntity;
 import com.techie.ecommerce.domain.model.ProductEntity;
 import com.techie.ecommerce.mappers.Mapper;
-import com.techie.ecommerce.security.CustomUserDetailsService;
 import com.techie.ecommerce.service.ProductService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
-public class ProductController {
+public class ProductController implements ProductApi {
     private static final Log log = LogFactory.getLog(ProductController.class);
 
     private final Mapper<ProductEntity, ProductDto> mapper;
@@ -32,27 +33,31 @@ public class ProductController {
         this.service = service;
     }
 
+    @Override
     @PostMapping
-    public ResponseEntity<?> createProduct(@RequestBody ProductCreation creation ){
+    public ResponseEntity<?> createProduct(@RequestBody ProductCreation creation){
         ProductCreationEntity product = creationMapper.mapFrom(creation);
         ProductCreationEntity savedCreation = service.createProduct(product);
         ProductCreation dto = creationMapper.mapTo(savedCreation);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
 
+    @Override
 
     @GetMapping
     public List<ProductDto> getAllProducts(){
         return service.fetchAllproducts();
     }
 
+    @Override
+
     @GetMapping("/{id}")
     public ProductDto getProductById(@PathVariable Integer id){
         return service.fetchProductById(id);
     }
-
+    @Override
     @PutMapping(path = "/{id}")
-    public ResponseEntity<?> updateProduct(@PathVariable Integer id , @RequestBody ProductCreation productDto){
+    public ResponseEntity<?> updateProduct(@PathVariable Integer id, @RequestBody ProductCreation productDto){
         log.info("Received update request for product with ID: "+ id);
 
         /*if(!service.isExists(id)){
@@ -72,23 +77,20 @@ public class ProductController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @Override
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Integer id){
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+    @Override
 
     @GetMapping("/filter")
     public ResponseEntity<List<ProductDto>> filterProducts(
-            @RequestParam(value = "title", required = false) String title,
-            @RequestParam(value = "price", required = false) Double price,
-            @RequestParam(value = "price_min", required = false) Double priceMin,
-            @RequestParam(value = "price_max", required = false) Double priceMax,
-            @RequestParam(value = "categoryId", required = false) Long categoryId,
-            @RequestParam(value = "limit", required = false) Integer limit,
-            @RequestParam(value = "offset", required = false) Integer offset) {
+            @RequestParam ProductFilter productFilter) {
 
-        List<ProductDto> products = service.filterProducts(title, price, priceMin, priceMax, categoryId, limit, offset);
+        List<ProductDto> products = service.filterProducts(productFilter);
         return ResponseEntity.ok(products);
     }
 }

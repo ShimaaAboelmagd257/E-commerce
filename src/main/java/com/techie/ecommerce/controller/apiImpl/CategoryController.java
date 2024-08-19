@@ -1,5 +1,6 @@
-package com.techie.ecommerce.controller;
+package com.techie.ecommerce.controller.apiImpl;
 
+import com.techie.ecommerce.controller.api.CategoryApi;
 import com.techie.ecommerce.domain.dto.CategoryDto;
 import com.techie.ecommerce.domain.dto.ProductDto;
 import com.techie.ecommerce.domain.model.CategoryEntity;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
-public class CategoryController {
+public class CategoryController implements CategoryApi {
 
     private final Mapper<CategoryEntity, CategoryDto> mapper;
     private final CategoryService service;
@@ -23,6 +24,8 @@ public class CategoryController {
         this.service = service;
     }
 
+
+    @Override
     @PostMapping
     public ResponseEntity<?> createCategory(@RequestBody CategoryDto categoryDto){
         CategoryEntity category = mapper.mapFrom(categoryDto);
@@ -30,34 +33,37 @@ public class CategoryController {
         CategoryDto dto = mapper.mapTo(savedCategory);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
+    @Override
     @GetMapping("/{id}/products")
     public ResponseEntity<List<ProductDto>> getProductsByCategory(@PathVariable("id")  Integer id) {
         List<ProductDto> products = service.getProductsByCategory(id);
         return ResponseEntity.ok(products);
     }
+    @Override
     @GetMapping
     public List<CategoryDto> getAllCategories(){
         return service.fetchAllCategories();
     }
-
+    @Override
     @GetMapping("/{id}")
     public CategoryDto getCategoryById(@PathVariable("id")  Integer id){
         return service.fetchCategoryById(id);
     }
-
+    @Override
     @PutMapping(path = "/{id}")
     public ResponseEntity<?> updateCategory(@PathVariable("id")  Integer id , @RequestBody CategoryDto categoryDto){
-        if(!service.isExists(id)){
+       /* if(!service.isExists(id)){
             return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
+        }*/
         categoryDto.setId(id);
         CategoryEntity updateCategory = mapper.mapFrom(categoryDto);
-        CategoryEntity category = service.updateCategory(id, updateCategory);
-        CategoryDto dto = mapper.mapTo(category);
+         service.updateCategory(id, updateCategory);
+        CategoryDto dto = mapper.mapTo(updateCategory);
         return new ResponseEntity(dto,HttpStatus.OK);
     }
+    @Override
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable("id")  Integer id){
+    public ResponseEntity<Void> deleteCategory(@PathVariable("id") Integer id){
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }

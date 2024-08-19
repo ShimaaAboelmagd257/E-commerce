@@ -46,6 +46,8 @@ public class SecurityFilterChainConfig   {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
+                                .requestMatchers("/swagger-ui/**").permitAll()
+                                .requestMatchers("/v3/api-docs/**").permitAll()
                                 .requestMatchers("/api/auth/login").permitAll()
                                 .requestMatchers("/user/**").permitAll()
                                 //.requestMatchers(HttpMethod.GET, "/api/products").permitAll() // Permit GET requests to /api/products

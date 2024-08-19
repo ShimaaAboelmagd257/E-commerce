@@ -1,5 +1,6 @@
-package com.techie.ecommerce.controller;
+package com.techie.ecommerce.controller.apiImpl;
 
+import com.techie.ecommerce.controller.api.OrderApi;
 import com.techie.ecommerce.domain.dto.OrderDto;
 import com.techie.ecommerce.domain.model.OrderEntity;
 import com.techie.ecommerce.mappers.Mapper;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/orders")
-public class OrderController {
+public class OrderController implements OrderApi {
 
     private OrderService service;
     private Mapper<OrderEntity, OrderDto> mapper;
@@ -25,14 +26,15 @@ public class OrderController {
         this.service = service;
         this.mapper = mapper;
     }
-
+    @Override
     @PostMapping
-    public ResponseEntity<OrderDto> createCart(@RequestBody OrderDto orderDto){
+    public ResponseEntity<OrderDto> createOrder(@RequestBody OrderDto orderDto){
         OrderEntity orderEntity =mapper.mapFrom(orderDto);
         OrderEntity savedOrder = service.save(orderEntity);
         OrderDto dto = mapper.mapTo(savedOrder);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
+    @Override
 
     @GetMapping(path = "/{orderId}")
     public ResponseEntity<OrderDto> getOrderById (@PathVariable Long orderId){
@@ -42,6 +44,8 @@ public class OrderController {
              return new ResponseEntity<>(dto,HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+    @Override
+
     @GetMapping
     public  ResponseEntity<List<OrderDto>> getAllOrders(){
         List<OrderEntity> orderEntity = service.getAllOrders();
@@ -51,6 +55,8 @@ public class OrderController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(orderDto);
     }
+    @Override
+
     @PutMapping(path = "/{orderId}")
     public ResponseEntity<OrderDto> updateOrder(
             @PathVariable("orderId") Long orderId,
@@ -67,7 +73,7 @@ public class OrderController {
                 mapper.mapTo(entity),
                 HttpStatus.OK);
     }
-
+    @Override
     @DeleteMapping("/{orderId}")
     public ResponseEntity<Void> deleteOrderById(@PathVariable Long orderId){
         service.deleteOrderById(orderId);

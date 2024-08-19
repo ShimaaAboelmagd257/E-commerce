@@ -1,12 +1,10 @@
 package com.techie.ecommerce.product;
 
-import com.techie.ecommerce.domain.dto.ProductCreation;
-import com.techie.ecommerce.domain.dto.ProductDto;
-import com.techie.ecommerce.domain.dto.UpdateProductResponse;
+import com.techie.ecommerce.domain.dto.CategoryDto;
 import com.techie.ecommerce.domain.model.UserEntity;
 import com.techie.ecommerce.repository.UserRepository;
 import com.techie.ecommerce.security.JwtTokenProvider;
-import com.techie.ecommerce.testUtl.ProductDtoUtil;
+import com.techie.ecommerce.testUtl.CategoryDtoUtil;
 import com.techie.ecommerce.testUtl.UserEntityUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,14 +18,13 @@ import org.springframework.http.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.util.Arrays;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class ProductControllerIntegrationTest {
+
+public class CategoryControllerIntegrationTest {
     private static final Log log = LogFactory.getLog(ProductControllerIntegrationTest.class);
 
     @Autowired
@@ -52,134 +49,129 @@ public class ProductControllerIntegrationTest {
         jwtToken = jwtTokenProvider.generateToken(testUser.getUsername());
     }
     @Test
-    public void getAllProductsTest() {
+    public void getAllCategoriesTest() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + jwtToken);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<ProductDto[]> response = restTemplate.exchange(
-                "/api/products",
+        ResponseEntity<CategoryDto[]> response = restTemplate.exchange(
+                "/api/categories",
                 HttpMethod.GET,
                 entity,
-                ProductDto[].class
+                CategoryDto[].class
         );
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertTrue(response.getBody().length > 0);
     }
-
-    @Test
-    void createPtoductTest(){
-        ProductCreation creation  = ProductDtoUtil.creation();
+       @Test
+    void createCategoryTest(){
+        CategoryDto creation  = CategoryDtoUtil.createCategory();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + jwtToken);
 
-        HttpEntity<ProductCreation> entity = new HttpEntity<>(creation,headers);
+        HttpEntity<CategoryDto> entity = new HttpEntity<>(creation,headers);
 
-        ResponseEntity<ProductCreation> response = restTemplate.exchange(
-                "/api/products",
+        ResponseEntity<CategoryDto> response = restTemplate.exchange(
+                "/api/categories",
                 HttpMethod.POST,
                 entity,
-                ProductCreation.class
+                CategoryDto.class
         );
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getBody()).isNotNull();
     }
-    @Test
-    void updateProductTest() {
 
-        ProductCreation product = ProductDtoUtil.creation();
+    @Test
+    void updateCategoryTest() {
+
+        CategoryDto category  = CategoryDtoUtil.createCategory();
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + jwtToken);
 
-        HttpEntity<ProductCreation> entity = new HttpEntity<>(product, headers);
-        ResponseEntity<ProductCreation> responseCreation  = restTemplate.exchange(
-                "/api/products",
+        HttpEntity<CategoryDto> entity = new HttpEntity<>(category, headers);
+        ResponseEntity<CategoryDto> responseCreation  = restTemplate.exchange(
+                "/api/categories",
                 HttpMethod.POST,
                 entity,
-                ProductCreation.class
+                CategoryDto.class
         );
 
-        ProductCreation updateRequest = ProductCreation.builder()
-                .title("Updated Title")
-                .price(150.0)
-                .description("new Desc")
-                .images(
-                        Arrays.asList(
-                                "https://i.imgur.com/QkIa5tT.jpeg",
-                                "https://i.imgur.com/jb5Yu0h.jpeg",
-                                "https://i.imgur.com/UlxxXyG.jpeg"
-                        )
-                ).build();
-        log.info("Sending PUT request to update product ID: " + responseCreation.getBody().getId());
+        CategoryDto updateRequest = CategoryDto.builder()
+                .name("Updated Cat")
+                .image("https://i.imgur.com/UlxxXyG.jpeg")
+               .build();
+        log.info("Sending PUT request to update Category ID: " + responseCreation.getBody().getId());
         log.info("Update request body: " + updateRequest);
-        HttpEntity<ProductCreation> updateEntity = new HttpEntity<>(updateRequest, headers);
-        ResponseEntity<UpdateProductResponse> response = restTemplate.exchange(
-                "/api/products/" + responseCreation.getBody().getId(),
+
+
+        HttpEntity<CategoryDto> updateEntity = new HttpEntity<>(updateRequest, headers);
+        ResponseEntity<CategoryDto> response = restTemplate.exchange(
+                "/api/categories/" + responseCreation.getBody().getId(),
                 HttpMethod.PUT,
                 updateEntity,
-                UpdateProductResponse.class
+                CategoryDto.class
         );
         log.info("Response from PUT update: " + response.getBody());
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getTitle()).isEqualTo("Updated Title");
-        assertThat(response.getBody().getPrice()).isEqualTo(150.0);
+        assertThat(response.getBody().getName()).isEqualTo("Updated Cat");
+        assertThat(response.getBody().getImage()).isEqualTo("https://i.imgur.com/UlxxXyG.jpeg");
     }
+
     @Test
-    void getProductByIdTest(){
-        ProductCreation creation  = ProductDtoUtil.creation();
+    void getCategoryByIdTest(){
+        CategoryDto category  = CategoryDtoUtil.createCategory();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + jwtToken);
 
-        HttpEntity<ProductCreation> entity1 = new HttpEntity<>(creation,headers);
+        HttpEntity<CategoryDto> entity1 = new HttpEntity<>(category,headers);
 
-        ResponseEntity<ProductCreation> createResponse = restTemplate.exchange(
-                "/api/products",
+        ResponseEntity<CategoryDto> createResponse = restTemplate.exchange(
+                "/api/categories",
                 HttpMethod.POST,
                 entity1,
-                ProductCreation.class
+                CategoryDto.class
         );
-        Integer createdProductId = createResponse.getBody().getId();
-        assertNotNull(createdProductId);
+        Integer createdCategoryId = createResponse.getBody().getId();
+        assertNotNull(createdCategoryId);
 
         HttpEntity<String> entity2 = new HttpEntity<>(headers);
 
-        ResponseEntity<ProductDto> response2 = restTemplate.exchange(
-                "/api/products/"+ createdProductId ,
+        ResponseEntity<CategoryDto> response2 = restTemplate.exchange(
+                "/api/categories/"+ createdCategoryId,
                 HttpMethod.GET,
                 entity2,
-                ProductDto.class
+                CategoryDto.class
         );
 
         assertEquals(HttpStatus.OK, response2.getStatusCode());
         assertNotNull(response2.getBody());
-        assertTrue(response2.getBody().getId() == createdProductId);
+        assertTrue(response2.getBody().getId() == createdCategoryId);
     }
-
     @Test
     void deletProductByIdTest(){
-        ProductCreation creation  = ProductDtoUtil.creation();
+        CategoryDto category  = CategoryDtoUtil.createCategory();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + jwtToken);
 
-        HttpEntity<ProductCreation> entity1 = new HttpEntity<>(creation,headers);
+        HttpEntity<CategoryDto> entity1 = new HttpEntity<>(category,headers);
 
-        ResponseEntity<ProductCreation> createResponse = restTemplate.exchange(
-                "/api/products",
+        ResponseEntity<CategoryDto> createResponse = restTemplate.exchange(
+                "/api/categories",
                 HttpMethod.POST,
                 entity1,
-                ProductCreation.class
+                CategoryDto.class
         );
-        Integer createdProductId = createResponse.getBody().getId();
-        assertNotNull(createdProductId);
+        Integer createdCategoryId = createResponse.getBody().getId();
+        assertNotNull(createdCategoryId);
 
         HttpEntity<String> deleteRequest = new HttpEntity<>(headers);
         ResponseEntity<Void> deleteResponse = restTemplate.exchange(
-                "/api/products/" + createdProductId,
+                "/api/categories/" + createdCategoryId,
                 HttpMethod.DELETE,
                 deleteRequest,
                 Void.class
@@ -187,7 +179,5 @@ public class ProductControllerIntegrationTest {
         assertEquals(HttpStatus.NO_CONTENT, deleteResponse.getStatusCode(), "Delete response status should be NO_CONTENT");
 
     }
-
-
 
 }

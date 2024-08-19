@@ -1,8 +1,10 @@
-package com.techie.ecommerce.controller;
+package com.techie.ecommerce.controller.apiImpl;
 
+import com.techie.ecommerce.controller.api.AuthApi;
 import com.techie.ecommerce.domain.model.LoginRequest;
 import com.techie.ecommerce.security.JwtAuthenticationResponse;
 import com.techie.ecommerce.security.JwtTokenProvider;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-public class AuthController {
+public class AuthController implements AuthApi {
     private static final Log log = LogFactory.getLog(AuthController.class);
 
     private final AuthenticationManager authenticationManager;
