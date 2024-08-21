@@ -3,15 +3,14 @@ package com.techie.ecommerce.service;
 import com.techie.ecommerce.domain.dto.CategoryDto;
 import com.techie.ecommerce.domain.dto.ProductDto;
 import com.techie.ecommerce.domain.model.CategoryEntity;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface CategoryService {
     CategoryEntity createCategory(CategoryEntity category);
 
-    List<ProductDto> getProductsByCategory(Integer categoryId);
+    Page<ProductDto> getProductsByCategory(int page , int size, Integer categoryId);
 
-    List<CategoryDto> fetchAllCategories();
+    Page<CategoryDto> fetchAllCategories(int page , int size);
 
     CategoryDto fetchCategoryById(Integer id);
 

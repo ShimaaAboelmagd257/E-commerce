@@ -6,6 +6,7 @@ import com.techie.ecommerce.domain.dto.ProductDto;
 import com.techie.ecommerce.domain.model.CategoryEntity;
 import com.techie.ecommerce.mappers.Mapper;
 import com.techie.ecommerce.service.CategoryService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,16 +34,27 @@ public class CategoryController implements CategoryApi {
         CategoryDto dto = mapper.mapTo(savedCategory);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
+
+
     @Override
     @GetMapping("/{id}/products")
-    public ResponseEntity<List<ProductDto>> getProductsByCategory(@PathVariable("id")  Integer id) {
-        List<ProductDto> products = service.getProductsByCategory(id);
+    public ResponseEntity<Page<ProductDto>> getProductsByCategory(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @PathVariable("id")  Integer id)
+    {
+        Page<ProductDto> products = service.getProductsByCategory(page,size,id);
         return ResponseEntity.ok(products);
     }
     @Override
     @GetMapping
-    public List<CategoryDto> getAllCategories(){
-        return service.fetchAllCategories();
+    public ResponseEntity<Page<CategoryDto>> getAllCategories(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+
+            ){
+        Page<CategoryDto> categoryDtos = service.fetchAllCategories(page,size);
+        return ResponseEntity.ok(categoryDtos);
     }
     @Override
     @GetMapping("/{id}")

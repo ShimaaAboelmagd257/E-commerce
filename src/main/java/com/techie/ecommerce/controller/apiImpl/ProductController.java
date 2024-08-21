@@ -10,6 +10,7 @@ import com.techie.ecommerce.mappers.Mapper;
 import com.techie.ecommerce.service.ProductService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,14 +44,17 @@ public class ProductController implements ProductApi {
     }
 
     @Override
-
     @GetMapping
-    public List<ProductDto> getAllProducts(){
-        return service.fetchAllproducts();
+    public Page<ProductDto> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return service.fetchAllProducts( page,size);
     }
 
-    @Override
 
+
+    @Override
     @GetMapping("/{id}")
     public ProductDto getProductById(@PathVariable Integer id){
         return service.fetchProductById(id);
@@ -84,13 +88,17 @@ public class ProductController implements ProductApi {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+
+
     @Override
-
     @GetMapping("/filter")
-    public ResponseEntity<List<ProductDto>> filterProducts(
-            @RequestParam ProductFilter productFilter) {
+    public ResponseEntity<Page<ProductDto>> filterProducts(
+            @RequestParam ProductFilter productFilter ,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-        List<ProductDto> products = service.filterProducts(productFilter);
+        Page<ProductDto> products = service.filterProducts(productFilter, page, size);
         return ResponseEntity.ok(products);
     }
 }

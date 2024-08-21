@@ -8,6 +8,9 @@ import com.techie.ecommerce.repository.ProductRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -36,12 +40,44 @@ public class ProductServiceImpl implements ProductService {
     public ProductServiceImpl(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
-
-    @Override
-    public List<ProductDto> fetchAllproducts(){
+/*    public Page<ProductDto> fetchAllProducts(int page, int size) {
         ResponseEntity<ProductDto[]> response = restTemplate.getForEntity(apiUrl, ProductDto[].class);
-        return Arrays.asList(response.getBody());
+        List<ProductDto> products = Arrays.asList(response.getBody());
+
+        // Manually implement pagination
+        int start = page * size;
+        int end = Math.min((start + size), products.size());
+        List<ProductDto> paginatedProducts = products.subList(start, end);
+
+        // Return the paginated data as a Page object
+        return new PageImpl<>(paginatedProducts, PageRequest.of(page, size), products.size());
+    }*/
+   /* @Override
+    public Page<ProductDto> fetchAllProducts(int page, int size){
+        ResponseEntity<ProductDto[]> response = restTemplate.getForEntity(apiUrl, ProductDto[].class);
+        List<ProductDto> products = Arrays.asList(response.getBody());
+        int start = page * size;
+        int end = Math.min((start + size), products.size());
+        List<ProductDto> paginatedProducts = products.subList(start, end);
+        return new PageImpl<>(paginatedProducts, PageRequest.of(page, size), products.size());
+    }*/
+   @Override
+   public Page<ProductDto> fetchAllProducts(int page, int size) {
+    ResponseEntity<ProductDto[]> response = restTemplate.getForEntity(apiUrl, ProductDto[].class);
+    List<ProductDto> products = Arrays.asList(response.getBody());
+
+    int start = page * size;
+    if (start >= products.size()) {
+        return new PageImpl<>(Collections.emptyList(), PageRequest.of(page, size), products.size());
     }
+
+    int end = Math.min((start + size), products.size());
+    List<ProductDto> paginatedProducts = products.subList(start, end);
+    return new PageImpl<>(paginatedProducts, PageRequest.of(page, size), products.size());
+}
+
+
+
     @Override
     public ProductDto fetchProductById(Integer id) {
         String idUrl = apiUrl + "/" + id;
@@ -105,7 +141,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> filterProducts(ProductFilter productFilter) {
+    public Page<ProductDto> filterProducts(ProductFilter productFilter , int page,int size) {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(apiUrl);
 
         if (productFilter.getTitle() != null) {
@@ -121,15 +157,20 @@ public class ProductServiceImpl implements ProductService {
         if (productFilter.getCategoryId() != null) {
             uriBuilder.queryParam("categoryId", productFilter.getCategoryId());
         }
+/*
         if (productFilter.getLimit() != null) {
             uriBuilder.queryParam("limit", productFilter.getLimit());
         }
         if (productFilter.getOffset() != null) {
             uriBuilder.queryParam("offset", productFilter.getOffset());
         }
-
+*/
+        uriBuilder.queryParam("page", page);
+        uriBuilder.queryParam("size", size);
         ResponseEntity<ProductDto[]> response = restTemplate.getForEntity(uriBuilder.toUriString(), ProductDto[].class);
-        return Arrays.asList(response.getBody());
+        List<ProductDto> productDtos = Arrays.asList(response.getBody());
+
+        return new PageImpl<>(productDtos,PageRequest.of(page,size),200);
     }
 
 

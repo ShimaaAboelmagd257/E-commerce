@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 @Tag(name = "Authentication", description = "the Authentication Api")
 public interface AuthApi {
 
-
     @Operation(
             summary = "Authenticate user",
             description = "Validate user request to login with Jwt ")

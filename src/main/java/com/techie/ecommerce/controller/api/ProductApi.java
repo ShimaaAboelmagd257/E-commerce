@@ -7,7 +7,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import com.techie.ecommerce.domain.dto.ProductCreation;
 import com.techie.ecommerce.domain.dto.ProductDto;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -29,7 +32,9 @@ public interface ProductApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Products successfully fetched")
     })
-    List<ProductDto> getAllProducts();
+    Page<ProductDto> getAllProducts(int page, int size);
+
+
 
     @Operation(
             summary = "Get product by ID",
@@ -65,5 +70,5 @@ public interface ProductApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Products successfully filtered")
     })
-    ResponseEntity<List<ProductDto>> filterProducts(ProductFilter productFilter);
+    ResponseEntity<Page<ProductDto>> filterProducts(ProductFilter productFilter, int page,int size);
 }

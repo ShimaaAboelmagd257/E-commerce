@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public interface CategoryApi {
             @ApiResponse(responseCode = "200", description = "Products successfully fetched"),
             @ApiResponse(responseCode = "404", description = "Category not found")
     })
-    ResponseEntity<List<ProductDto>> getProductsByCategory(Integer id);
+    ResponseEntity<Page<ProductDto>> getProductsByCategory(int page , int size,Integer id);
 
     @Operation(
             summary = "Get all categories",
@@ -37,7 +38,7 @@ public interface CategoryApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Categories successfully fetched")
     })
-    List<CategoryDto> getAllCategories();
+    ResponseEntity<Page<CategoryDto>> getAllCategories(int page , int size );
 
     @Operation(
             summary = "Get category by ID",

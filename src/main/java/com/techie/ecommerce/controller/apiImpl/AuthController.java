@@ -4,7 +4,6 @@ import com.techie.ecommerce.controller.api.AuthApi;
 import com.techie.ecommerce.domain.model.LoginRequest;
 import com.techie.ecommerce.security.JwtAuthenticationResponse;
 import com.techie.ecommerce.security.JwtTokenProvider;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;

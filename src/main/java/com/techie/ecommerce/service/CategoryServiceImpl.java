@@ -7,6 +7,9 @@ import com.techie.ecommerce.repository.CategoryRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -52,16 +55,22 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public List<ProductDto> getProductsByCategory(Integer categoryId) {
+    public Page<ProductDto> getProductsByCategory(int page, int size, Integer categoryId) {
         String url = apiUrl + "/" + categoryId + "/products";
         ResponseEntity<ProductDto[]> response = restTemplate.getForEntity(url, ProductDto[].class);
-        return Arrays.asList(response.getBody());
+        List<ProductDto> productDtos = Arrays.asList(response.getBody());
+        int start = page * size;
+        int end = Math.min((start + size), productDtos.size());
+        List<ProductDto> paginatedProducts = productDtos.subList(start, end);
+
+        return new PageImpl<>(paginatedProducts, PageRequest.of(page,size), productDtos.size());
     }
 
     @Override
-    public List<CategoryDto> fetchAllCategories() {
+    public Page<CategoryDto> fetchAllCategories(int page , int size) {
         ResponseEntity<CategoryDto[]> response = restTemplate.getForEntity(apiUrl, CategoryDto[].class);
-        return Arrays.asList(response.getBody());
+        List<CategoryDto> categoryDtos = Arrays.asList(response.getBody());
+        return new PageImpl<>(categoryDtos,PageRequest.of(page,size),categoryDtos.size());
 
     }
 
