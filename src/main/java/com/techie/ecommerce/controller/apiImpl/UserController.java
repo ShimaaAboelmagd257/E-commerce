@@ -30,8 +30,8 @@ public class UserController implements UserApi {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
-@Override
-    @PostMapping
+    @Override
+    @PostMapping("/register")
     public ResponseEntity<?> createUser(@RequestBody UserDto userDto) {
         UserEntity userEntity = userMapper.mapFrom(userDto);
         log.info("Creating user with username: {}"+ userEntity.getUsername());
@@ -91,6 +91,31 @@ public class UserController implements UserApi {
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
         userService.deleteUserById(userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<UserDto> getUserByUserNameOrEmail(String username, String email) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Void> changePassword(Long id, String newPassword) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Void> forgetPassword(String email) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Void> resetPassword(String token, String newPassword) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<UserDto> getUserProfile() {
+        return null;
     }
 
 }
