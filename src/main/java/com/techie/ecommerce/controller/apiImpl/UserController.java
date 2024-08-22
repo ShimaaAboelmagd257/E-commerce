@@ -8,7 +8,6 @@ import com.techie.ecommerce.service.UserService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -78,9 +77,9 @@ public class UserController implements UserApi {
             @PathVariable("userId") Long userId,
             @RequestBody UserDto userDto
     ){
-        if(!userService.isExists(userId)){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+//        if(!userService.isExists(userId)){
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
 
         userDto.setId(userId);
         UserEntity updateUser = userMapper.mapFrom(userDto);
@@ -98,21 +97,20 @@ public class UserController implements UserApi {
 
     @Override
     @GetMapping("/search")
-    public ResponseEntity<UserDto> getUserByUsernameOrEmail(@RequestParam String username,@RequestParam String email) {
-        Optional<UserEntity> userEntity = userService.getUserByUsernameOrEmail(username,email);
-        return userEntity.map( user -> {
-            UserDto responseDto = userMapper.mapTo(user);
-            return new ResponseEntity<>(responseDto,HttpStatus.OK);
-
-        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<List<UserDto>> getUserByUsernameOrEmail(@RequestParam String username, @RequestParam String email) {
+        List<UserEntity> userEntities = userService.getUserByUsernameOrEmail(username,email);
+        List<UserDto> responseDtos = userEntities.stream()
+                .map(userMapper::mapTo)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(responseDtos);
     }
 
     @Override
     @PutMapping("/{userId}/change-password")
     public ResponseEntity<Void> changePassword(@PathVariable Long userId,@RequestParam String newPassword) {
-        if(!userService.isExists(userId)){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+//        if(!userService.isExists(userId)){
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
         userService.changePassword(userId,newPassword);
         return ResponseEntity.ok().build();
     }

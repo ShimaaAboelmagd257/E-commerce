@@ -17,7 +17,7 @@ public interface UserService {
     void deleteUserById(Long userId);
 
 
-    Optional<UserEntity> getUserByUsernameOrEmail(String username, String email);
+    List<UserEntity> getUserByUsernameOrEmail(String username, String email);
 
     void changePassword(Long id, String newPassword);
 

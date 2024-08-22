@@ -72,7 +72,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "200", description = "User found and returned", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDto.class))),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    ResponseEntity<UserDto> getUserByUsernameOrEmail(
+    ResponseEntity<List<UserDto>> getUserByUsernameOrEmail(
             @RequestParam String username,
             @RequestParam String email
     );

@@ -3,6 +3,8 @@ package com.techie.ecommerce.service;
 import com.techie.ecommerce.domain.model.UserEntity;
 import com.techie.ecommerce.repository.UserRepository;
 import com.techie.ecommerce.security.JwtTokenProvider;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,6 +15,7 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
+    private static final Log log = LogFactory.getLog(UserServiceImpl.class);
 
     @Autowired
     private MailService mailService;
@@ -59,8 +62,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserEntity> getUserByUsernameOrEmail(String username, String email) {
-        return userRepository.findByUsernameOrEmail(username,email);
+    public List<UserEntity> getUserByUsernameOrEmail(String username, String email) {
+            return userRepository.findByUsernameOrEmail(username, email);
     }
 
     @Override
@@ -72,7 +75,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void setPasswordResetToken(String email) {
-        UserEntity userEntity = userRepository.finByEmail(email).orElseThrow(()->new UsernameNotFoundException("User Not Found"));
+        UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(()->new UsernameNotFoundException("User Not Found"));
         String token = provider.generateToken(userEntity.getUsername());
         mailService.sendPasswordRestToken(userEntity,token);
     }
@@ -84,7 +87,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void resetPassword(String token, String newPassword) {
-        UserEntity userEntity = userRepository.findByRequestTopken(token).orElseThrow(()->new UsernameNotFoundException("User Not Found"));
+        UserEntity userEntity = userRepository.findByRequestToken(token).orElseThrow(()->new UsernameNotFoundException("User Not Found"));
         userEntity.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(userEntity);
     }

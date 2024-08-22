@@ -40,7 +40,7 @@ public class CategoryControllerIntegrationTest {
     @BeforeEach
     public void setUp() {
         // Create and save a test user
-        UserEntity testUser = UserEntityUtil.createTestUser();
+        UserEntity testUser = UserEntityUtil.createUserEntity();
         testUser.setPassword(new BCryptPasswordEncoder().encode("279155"));
         if(!userRepository.existsByUsername(testUser.getUsername())){
             userRepository.save(testUser);

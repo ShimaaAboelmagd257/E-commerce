@@ -26,6 +26,7 @@ public class UserEntity {
     @Column
     private String email;
 
+    private String requestToken;
     @Column
     private String firstName;
 
