@@ -2,7 +2,9 @@ package com.techie.ecommerce.service;
 
 import com.techie.ecommerce.domain.model.UserEntity;
 import com.techie.ecommerce.repository.UserRepository;
+import com.techie.ecommerce.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,11 +15,16 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     @Autowired
+    private MailService mailService;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JwtTokenProvider provider;
 
     @Override
     public UserEntity save(UserEntity user) {
@@ -27,10 +34,6 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
-   /* @Override
-    public UserEntity save(UserEntity userEntity) {
-        return userRepository.save(userEntity);
-    }*/
 
     @Override
     public Optional<UserEntity> getUserById(Long userId) {
@@ -53,8 +56,6 @@ public class UserServiceImpl implements UserService {
         if (userEntity != null){
             userRepository.deleteById(userId);
         }
-
-
     }
 
     @Override
@@ -64,12 +65,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changePassword(Long id, String newPassword) {
-
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(()-> new UsernameNotFoundException("User NotFound Exception"));
+        userEntity.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(userEntity);
     }
 
     @Override
     public void setPasswordResetToken(String email) {
-
+        UserEntity userEntity = userRepository.finByEmail(email).orElseThrow(()->new UsernameNotFoundException("User Not Found"));
+        String token = provider.generateToken(userEntity.getUsername());
+        mailService.sendPasswordRestToken(userEntity,token);
     }
 
     @Override
@@ -79,25 +84,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void resetPassword(String token, String newPassword) {
-
+        UserEntity userEntity = userRepository.findByRequestTopken(token).orElseThrow(()->new UsernameNotFoundException("User Not Found"));
+        userEntity.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(userEntity);
     }
-
-   /* @Override
-    public Optional<UserDetails> getUserByUserName(String userName) {
-        return Optional.empty();
-    }*/
-    /*public UserEntity loadUserByUserName(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    @Override
-    public Optional<UserDetails> getUserByUserName(String username) throws UsernameNotFoundException {
-        UserEntity user = loadUserByUserName(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found with username: " + username);
-        }
-        return Optional.of(new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), new ArrayList<>()));
-    }*/
 
 
 }

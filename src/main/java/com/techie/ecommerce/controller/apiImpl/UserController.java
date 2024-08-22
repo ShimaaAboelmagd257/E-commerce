@@ -90,7 +90,6 @@ public class UserController implements UserApi {
                 HttpStatus.OK);
     }
     @Override
-
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
         userService.deleteUserById(userId);
@@ -98,6 +97,7 @@ public class UserController implements UserApi {
     }
 
     @Override
+    @GetMapping("/search")
     public ResponseEntity<UserDto> getUserByUsernameOrEmail(@RequestParam String username,@RequestParam String email) {
         Optional<UserEntity> userEntity = userService.getUserByUsernameOrEmail(username,email);
         return userEntity.map( user -> {
@@ -108,27 +108,31 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<Void> changePassword(@PathVariable Long id,@RequestParam String newPassword) {
-        if(!userService.isExists(id)){
+    @PutMapping("/{userId}/change-password")
+    public ResponseEntity<Void> changePassword(@PathVariable Long userId,@RequestParam String newPassword) {
+        if(!userService.isExists(userId)){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        userService.changePassword(id,newPassword);
+        userService.changePassword(userId,newPassword);
         return ResponseEntity.ok().build();
     }
 
     @Override
+    @PostMapping("/forget-password")
     public ResponseEntity<Void> forgetPassword(@RequestBody String email) {
         userService.setPasswordResetToken(email);
         return ResponseEntity.ok().build();
     }
 
     @Override
+    @PostMapping("/reset-password")
     public ResponseEntity<Void> resetPassword(@RequestParam String token,@RequestBody String newPassword) {
         userService.resetPassword(token,newPassword);
         return ResponseEntity.ok().build();
     }
 
     @Override
+    @GetMapping("/profile")
     public ResponseEntity<UserDto> getUserProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
