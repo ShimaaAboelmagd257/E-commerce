@@ -17,4 +17,13 @@ public interface UserService {
     void deleteUserById(Long userId);
 
 
+    Optional<UserEntity> getUserByUsernameOrEmail(String username, String email);
+
+    void changePassword(Long id, String newPassword);
+
+    void setPasswordResetToken(String email);
+
+    Optional<UserEntity> getUserByUsername(String username);
+
+    void resetPassword(String token, String newPassword);
 }

@@ -8,8 +8,12 @@ import com.techie.ecommerce.service.UserService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -94,28 +98,43 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<UserDto> getUserByUserNameOrEmail(String username, String email) {
-        return null;
+    public ResponseEntity<UserDto> getUserByUsernameOrEmail(@RequestParam String username,@RequestParam String email) {
+        Optional<UserEntity> userEntity = userService.getUserByUsernameOrEmail(username,email);
+        return userEntity.map( user -> {
+            UserDto responseDto = userMapper.mapTo(user);
+            return new ResponseEntity<>(responseDto,HttpStatus.OK);
+
+        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @Override
-    public ResponseEntity<Void> changePassword(Long id, String newPassword) {
-        return null;
+    public ResponseEntity<Void> changePassword(@PathVariable Long id,@RequestParam String newPassword) {
+        if(!userService.isExists(id)){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        userService.changePassword(id,newPassword);
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public ResponseEntity<Void> forgetPassword(String email) {
-        return null;
+    public ResponseEntity<Void> forgetPassword(@RequestBody String email) {
+        userService.setPasswordResetToken(email);
+        return ResponseEntity.ok().build();
     }
 
     @Override
-    public ResponseEntity<Void> resetPassword(String token, String newPassword) {
-        return null;
+    public ResponseEntity<Void> resetPassword(@RequestParam String token,@RequestBody String newPassword) {
+        userService.resetPassword(token,newPassword);
+        return ResponseEntity.ok().build();
     }
 
     @Override
     public ResponseEntity<UserDto> getUserProfile() {
-        return null;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserEntity user = userService.getUserByUsername(username).orElseThrow(() -> new  UsernameNotFoundException("UserNot Found"));
+        UserDto userDto = userMapper.mapTo(user);
+        return new ResponseEntity<>(userDto,HttpStatus.OK);
     }
 
 }

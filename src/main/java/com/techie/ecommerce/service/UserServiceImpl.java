@@ -57,6 +57,31 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public Optional<UserEntity> getUserByUsernameOrEmail(String username, String email) {
+        return userRepository.findByUsernameOrEmail(username,email);
+    }
+
+    @Override
+    public void changePassword(Long id, String newPassword) {
+
+    }
+
+    @Override
+    public void setPasswordResetToken(String email) {
+
+    }
+
+    @Override
+    public Optional<UserEntity> getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public void resetPassword(String token, String newPassword) {
+
+    }
+
    /* @Override
     public Optional<UserDetails> getUserByUserName(String userName) {
         return Optional.empty();
