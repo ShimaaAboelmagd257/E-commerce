@@ -1,6 +1,7 @@
 package com.techie.ecommerce.controller.api;
 
 import com.techie.ecommerce.domain.dto.CategoryDto;
+import com.techie.ecommerce.domain.dto.PageResponse;
 import com.techie.ecommerce.domain.dto.ProductDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -38,7 +39,7 @@ public interface CategoryApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Categories successfully fetched")
     })
-    ResponseEntity<Page<CategoryDto>> getAllCategories(int page , int size );
+    PageResponse<CategoryDto> getAllCategories(int page , int size );
 
     @Operation(
             summary = "Get category by ID",

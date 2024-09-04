@@ -2,6 +2,7 @@ package com.techie.ecommerce.controller.apiImpl;
 
 import com.techie.ecommerce.controller.api.CategoryApi;
 import com.techie.ecommerce.domain.dto.CategoryDto;
+import com.techie.ecommerce.domain.dto.PageResponse;
 import com.techie.ecommerce.domain.dto.ProductDto;
 import com.techie.ecommerce.domain.model.CategoryEntity;
 import com.techie.ecommerce.mappers.Mapper;
@@ -10,8 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -48,13 +47,18 @@ public class CategoryController implements CategoryApi {
     }
     @Override
     @GetMapping
-    public ResponseEntity<Page<CategoryDto>> getAllCategories(
+    public PageResponse<CategoryDto> getAllCategories(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
 
             ){
-        Page<CategoryDto> categoryDtos = service.fetchAllCategories(page,size);
-        return ResponseEntity.ok(categoryDtos);
+        Page<CategoryDto> categoryDtos = service.fetchAllCategories(page, size);
+        PageResponse<CategoryDto> response = new PageResponse<>();
+        response.setContent(categoryDtos.getContent());
+        response.setTotalPages(categoryDtos.getTotalPages());
+        response.setTotalElements(categoryDtos.getTotalElements());
+        return response;
+
     }
     @Override
     @GetMapping("/{id}")

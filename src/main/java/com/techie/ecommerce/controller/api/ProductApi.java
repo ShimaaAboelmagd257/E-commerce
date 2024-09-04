@@ -1,4 +1,5 @@
 package com.techie.ecommerce.controller.api;
+import com.techie.ecommerce.domain.dto.PageResponse;
 import com.techie.ecommerce.domain.dto.ProductFilter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -32,7 +33,7 @@ public interface ProductApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Products successfully fetched")
     })
-    Page<ProductDto> getAllProducts(int page, int size);
+    PageResponse<ProductDto> getAllProducts(int page, int size);
 
 
 

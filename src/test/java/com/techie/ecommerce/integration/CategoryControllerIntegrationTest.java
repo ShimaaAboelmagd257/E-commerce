@@ -1,6 +1,9 @@
 package com.techie.ecommerce.integration;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.techie.ecommerce.domain.dto.CategoryDto;
+import com.techie.ecommerce.domain.dto.PageResponse;
 import com.techie.ecommerce.domain.model.UserEntity;
 import com.techie.ecommerce.repository.UserRepository;
 import com.techie.ecommerce.security.JwtTokenProvider;
@@ -49,22 +52,24 @@ public class CategoryControllerIntegrationTest {
         jwtToken = jwtTokenProvider.generateToken(testUser.getUsername());
     }
     @Test
-    public void getAllCategoriesTest() {
+    public void getAllCategoriesTest() throws Exception{
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + jwtToken);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<CategoryDto[]> response = restTemplate.exchange(
+        ResponseEntity<String> response = restTemplate.exchange(
                 "/api/categories",
                 HttpMethod.GET,
                 entity,
-                CategoryDto[].class
+              String.class
         );
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
+        ObjectMapper objectMapper = new ObjectMapper();
+        PageResponse<CategoryDto> page = objectMapper.readValue(response.getBody(), new TypeReference<PageResponse<CategoryDto>>() {});
         assertNotNull(response.getBody());
-        assertTrue(response.getBody().length > 0);
+        assertTrue(page.getContent().size()>0);
     }
        @Test
     void createCategoryTest(){

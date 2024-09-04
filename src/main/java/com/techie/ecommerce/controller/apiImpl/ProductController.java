@@ -1,6 +1,7 @@
 package com.techie.ecommerce.controller.apiImpl;
 
 import com.techie.ecommerce.controller.api.ProductApi;
+import com.techie.ecommerce.domain.dto.PageResponse;
 import com.techie.ecommerce.domain.dto.ProductCreation;
 import com.techie.ecommerce.domain.dto.ProductDto;
 import com.techie.ecommerce.domain.dto.ProductFilter;
@@ -16,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
@@ -45,11 +45,16 @@ public class ProductController implements ProductApi {
 
     @Override
     @GetMapping
-    public Page<ProductDto> getAllProducts(
+    public PageResponse<ProductDto> getAllProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ){
-        return service.fetchAllProducts( page,size);
+        Page<ProductDto> productPage = service.fetchAllProducts(page, size);
+        PageResponse<ProductDto> response = new PageResponse<>();
+        response.setContent(productPage.getContent());
+        response.setTotalPages(productPage.getTotalPages());
+        response.setTotalElements(productPage.getTotalElements());
+        return response;
     }
 
 
