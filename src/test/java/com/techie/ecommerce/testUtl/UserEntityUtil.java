@@ -9,9 +9,9 @@ public class UserEntityUtil {
 
     public static UserEntity createUserEntity() {
         return UserEntity.builder()
-                .username("jackimohammed")
+                .username("shbasheb")
                 .password("279155")
-                .email("testuserrr@example.com")
+                .email("shbasheb@example.com")
                 .firstName("Test")
                 .lastName("User")
                 .orders(Collections.emptyList())

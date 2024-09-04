@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Map;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -100,7 +101,7 @@ public interface UserApi {
             @ApiResponse(responseCode = "404", description = "User with the provided email not found")
     })
     ResponseEntity<Void> forgetPassword(
-            @RequestParam String email
+            Map<String, String> request
     );
     @Operation(
             summary = "Reset password",
@@ -113,7 +114,7 @@ public interface UserApi {
     })
     ResponseEntity<Void> resetPassword(
             @RequestParam String token,
-            @RequestBody String newPassword
+            @RequestBody Map<String, String> request
     );
     @Operation(
             summary = "Get user profile",

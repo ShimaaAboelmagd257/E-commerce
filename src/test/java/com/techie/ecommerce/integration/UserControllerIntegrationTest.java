@@ -3,6 +3,7 @@ package com.techie.ecommerce.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.techie.ecommerce.domain.dto.UserDto;
 import com.techie.ecommerce.domain.model.UserEntity;
+import com.techie.ecommerce.mappers.UserMapperImpl;
 import com.techie.ecommerce.repository.UserRepository;
 import com.techie.ecommerce.security.JwtTokenProvider;
 import com.techie.ecommerce.testUtl.UserEntityUtil;
@@ -17,6 +18,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -40,6 +42,8 @@ public class UserControllerIntegrationTest {
     ObjectMapper objectMapper;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    private UserMapperImpl userMapper;
 
 
    /* @BeforeEach
@@ -142,6 +146,49 @@ public class UserControllerIntegrationTest {
                 .param("newPassword","newPassword"))
                 .andExpect(status().isOk());
 
+    }
+    @Test
+    @WithMockUser
+    void forgetPasswordTest() throws  Exception{
+        UserEntity testUser = UserEntityUtil.createUserEntity();
+        testUser.setPassword(new BCryptPasswordEncoder().encode("279155"));
+        userRepository.save(testUser);
+        String email = testUser.getEmail();
+        mockMvc.perform(post("/user/forget-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"" + email + "\"}"))
+                .andExpect(status().isOk());
+    }
+    @Test
+    @WithMockUser
+    void resetPasswordTest() throws Exception{
+        UserEntity testUser = UserEntityUtil.createUserEntity();
+        testUser.setPassword(new BCryptPasswordEncoder().encode("279155"));
+        testUser.setRequestToken("valid-reset-token");
+        userRepository.save(testUser);
+
+        String newPassword = "newPassword";
+        mockMvc.perform(post("/user/reset-password")
+                        .param("token","valid-reset-token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"newPassword\":\"" + newPassword + "\"}"))
+                .andExpect(status().isOk());
+        UserEntity updated = userRepository.findById(testUser.getId()).orElseThrow();
+        assertTrue(passwordEncoder.matches(newPassword,updated.getPassword()));
+
+    }
+    @Test
+    @WithMockUser(username = "shbasheb")
+    void getProfileTest() throws Exception{
+        UserEntity testUser = UserEntityUtil.createUserEntity();
+        testUser.setUsername("shbasheb");
+        userRepository.save(testUser);
+        UserDto dto = userMapper.mapTo(testUser);
+
+        mockMvc.perform(get("/user/profile"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value(dto.getUsername()))
+                .andExpect(jsonPath("$.email").value(dto.getEmail()));
     }
 
 }

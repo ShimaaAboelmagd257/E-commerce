@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -118,14 +119,16 @@ public class UserController implements UserApi {
 
     @Override
     @PostMapping("/forget-password")
-    public ResponseEntity<Void> forgetPassword(@RequestBody String email) {
+    public ResponseEntity<Void> forgetPassword(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
         userService.setPasswordResetToken(email);
         return ResponseEntity.ok().build();
     }
 
     @Override
     @PostMapping("/reset-password")
-    public ResponseEntity<Void> resetPassword(@RequestParam String token,@RequestBody String newPassword) {
+    public ResponseEntity<Void> resetPassword(@RequestParam String token,@RequestBody Map<String, String> request) {
+        String newPassword = request.get("newPassword");
         userService.resetPassword(token,newPassword);
         return ResponseEntity.ok().build();
     }
