@@ -42,7 +42,7 @@ public class UserControllerIntegrationTest {
     private BCryptPasswordEncoder passwordEncoder;
 
 
-    @BeforeEach
+   /* @BeforeEach
     public void setUp() {
         // Create and save a test user
         UserEntity testUser = UserEntityUtil.createUserEntity();
@@ -52,15 +52,21 @@ public class UserControllerIntegrationTest {
         }
         JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(); // Ensure this is properly configured
         jwtToken = jwtTokenProvider.generateToken(testUser.getUsername());
-    }
+    }*/
 
     @Test
     @WithMockUser
     void createUserTest() throws  Exception{
-        UserDto userDto = UserEntityUtil.createUserDtoUtil();
+        UserDto testUser = UserEntityUtil.createUserDtoUtil();
+        testUser.setPassword(new BCryptPasswordEncoder().encode("279155"));
+        /*if(!userRepository.existsByUsername(testUser.getUsername())){
+            userRepository.save(testUser);
+        }*/
+        JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(); // Ensure this is properly configured
+        jwtToken = jwtTokenProvider.generateToken(testUser.getUsername());
         mockMvc.perform(post("/user/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userDto)))
+                .content(objectMapper.writeValueAsString(testUser)))
                 .andExpect(status().isCreated());
 
     }
@@ -68,7 +74,14 @@ public class UserControllerIntegrationTest {
     @Test
     @WithMockUser
     void getUserByIdTest() throws Exception{
-        Long userId = 1L;
+        UserEntity testUser = UserEntityUtil.createUserEntity();
+        testUser.setPassword(new BCryptPasswordEncoder().encode("279155"));
+
+       // if(!userRepository.existsById(testUser.getId())){
+            userRepository.save(testUser);
+     //   }
+
+        Long userId = testUser.getId();
         mockMvc.perform(get("/user/{userId}",userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userId));
@@ -87,12 +100,13 @@ public class UserControllerIntegrationTest {
     void updateUserTest() throws Exception{
         Long userId = 1L;
         UserDto userDto = UserEntityUtil.createUserDtoUtil();
-        userDto.setUsername("Updated");
+        userDto.setUsername("ha");
+
         mockMvc.perform(put("/user/{userId}",userId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("Updated"));
+                .andExpect(jsonPath("$.username").value("ha"));
     }
 
     @Test
@@ -107,8 +121,8 @@ public class UserControllerIntegrationTest {
     @WithMockUser
     void getUserByUsernameOrEmail() throws Exception{
       //  UserDto userDto = UserEntityUtil.createUserDtoUtil();
-        String username = "shosh";
-        String email = "shosh@gmail.com";
+        String username = "shemoiiii";
+        String email = "testuserrr@example.com";
         mockMvc.perform(get("/user/search")
                 .param("username",username)
                 .param("email",email))
@@ -120,7 +134,10 @@ public class UserControllerIntegrationTest {
     @Test
     @WithMockUser
     void changePasswordTest() throws Exception{
-        Long userId = 1L;
+        UserEntity testUser = UserEntityUtil.createUserEntity();
+        testUser.setPassword(new BCryptPasswordEncoder().encode("279155"));
+        userRepository.save(testUser);
+        Long userId = testUser.getId();
         mockMvc.perform(put("/user/{userId}/change-password",userId)
                 .param("newPassword","newPassword"))
                 .andExpect(status().isOk());

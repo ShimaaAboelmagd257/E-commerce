@@ -9,9 +9,9 @@ public class UserEntityUtil {
 
     public static UserEntity createUserEntity() {
         return UserEntity.builder()
-                .username("shemoii")
+                .username("jackimohammed")
                 .password("279155")
-                .email("testuser@example.com")
+                .email("testuserrr@example.com")
                 .firstName("Test")
                 .lastName("User")
                 .orders(Collections.emptyList())
@@ -31,9 +31,9 @@ public class UserEntityUtil {
     }
     public static UserDto createUserDtoUtil(){
         return UserDto.builder()
-                .username("Shoshi")
+                .username("Shoshosjjhosho")
                 .password("279155")
-                .email("Shoshi@example.com")
+                .email("Shoshiiiiii@example.com")
                 .firstName("Test")
                 .lastName("User")
                 .orders(Collections.emptyList())

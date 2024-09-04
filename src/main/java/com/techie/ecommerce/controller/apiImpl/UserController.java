@@ -97,12 +97,13 @@ public class UserController implements UserApi {
 
     @Override
     @GetMapping("/search")
-    public ResponseEntity<List<UserDto>> getUserByUsernameOrEmail(@RequestParam String username, @RequestParam String email) {
-        List<UserEntity> userEntities = userService.getUserByUsernameOrEmail(username,email);
-        List<UserDto> responseDtos = userEntities.stream()
-                .map(userMapper::mapTo)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(responseDtos);
+    public ResponseEntity<UserDto> getUserByUsernameOrEmail(@RequestParam String username, @RequestParam String email) {
+        Optional<UserEntity> userEntity = userService.getUserByUsernameOrEmail(username,email);
+        return userEntity.map( user -> {
+            UserDto responseDto = userMapper.mapTo(user);
+            return new ResponseEntity<>(responseDto,HttpStatus.OK);
+
+        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @Override

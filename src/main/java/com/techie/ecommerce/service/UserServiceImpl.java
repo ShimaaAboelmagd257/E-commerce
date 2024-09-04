@@ -28,14 +28,40 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private JwtTokenProvider provider;
+/*@Override
+public UserEntity save(UserEntity user) {
+    if (user.getPassword() == null) {
+        throw new IllegalArgumentException("Password cannot be null.");
+    }
 
-    @Override
-    public UserEntity save(UserEntity user) {
-        if (user.getPassword() == null || userRepository.existsByUsername(user.getUsername())) {
-            throw new IllegalArgumentException("Password cannot be null Or user is registered");
-        }
+    if (user.getId() == null) {
+        // New user creation
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
+    } else {
+        // Update existing user
+        if (!userRepository.existsById(user.getId())) {
+            throw new IllegalArgumentException("User does not exist.");
+        }
+        // Optionally, check if the password is being updated
+        if (passwordNeedsUpdate(user)) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        return userRepository.save(user);
+    }
+}*/
+    @Override
+    public UserEntity save(UserEntity user) {
+        if (user.getPassword() == null) {
+            throw new IllegalArgumentException("Password cannot be assigned null ");
+        }
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new IllegalArgumentException("Username '" + user.getUsername() + "' is already taken.");
+        }
+
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            return userRepository.save(user);
+
     }
 
     @Override
@@ -62,7 +88,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserEntity> getUserByUsernameOrEmail(String username, String email) {
+    public Optional<UserEntity> getUserByUsernameOrEmail(String username, String email) {
             return userRepository.findByUsernameOrEmail(username, email);
     }
 
