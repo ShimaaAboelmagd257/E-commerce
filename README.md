@@ -4,14 +4,48 @@
 This is the backend of an E-commerce application built using Spring Boot. It provides RESTful APIs for managing users, products, carts, orders, and payments. The project is designed with a focus on scalability, security, and ease of use.
 
 ## Features
-- User management: Registration, login, and profile management
-- Product management: CRUD operations for products
-- Cart management: Add, remove, and view items in the cart
-- Order management: Place and track orders
-- Payment processing: Secure payment integration
-- JWT Authentication for secure API access
-- Database integration using PostgreSQL
 
+- **User Management:**
+  - Registration, login, and profile management for users.
+
+- **Authentication:**
+  - Secure API access using JSON Web Tokens (JWT) for authentication and authorization.
+
+- **Product Management:**
+  - CRUD operations for managing products in the store.
+
+- **Category Management:**
+  - Manage and organize products into categories.
+
+- **Cart Management:**
+  - Add, remove, and view items in the cart.
+  - Check inventory availability before checkout.
+  - Calculate total price of items in the cart.
+  - Remove all items from the cart in one action.
+
+- **Order Management:**
+  - Place and track orders.
+  - Manage ordered items associated with each order.
+
+- **Discount Management:**
+  - Apply discounts to products or orders to provide special offers.
+
+- **Payment Processing:**
+  - Secure payment integration to handle transactions safely.
+
+- **Shipping Management:**
+  - Handle shipping options and track shipment status.
+
+- **Rating and Reviews:**
+  - Allow users to rate and review products to provide feedback and insights.
+
+- **Watchlist Management:**
+  - Users can add products to a watchlist to track items of interest.
+
+- **Database Integration:**
+  - Integrated with PostgreSQL for data persistence and retrieval.
+
+    
 ## Technologies Used
 - **Java 17**
 - **Spring Boot**
