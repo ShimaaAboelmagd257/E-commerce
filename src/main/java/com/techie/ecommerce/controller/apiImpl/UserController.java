@@ -61,7 +61,6 @@ public class UserController implements UserApi {
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
     @Override
-
     @GetMapping
     public  ResponseEntity<List<UserDto>> getAllUsers(){
          List<UserEntity> userEntities = userService.getAllUsers();

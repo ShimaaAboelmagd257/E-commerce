@@ -12,24 +12,27 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity(name = "Product")
+@Entity(name = "product")
 public class ProductEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer productId;
+    private Integer id;
     private String title;
     private double price;
     private String description;
     @ManyToOne
     @JoinColumn(name = "category_id")
    private CategoryEntity category;
+    @ElementCollection
+    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "image_url")
     private List<String> images;
 
     private int quantity;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItemEntity> orderItems;
-    @ManyToOne
-    @JoinColumn(name = "cart_id")
-    private CartEntity cart;
+
+    @OneToMany
+    private List<CartItemEntity> cart;
 
 }

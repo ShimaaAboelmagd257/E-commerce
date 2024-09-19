@@ -20,8 +20,10 @@ public class UserDto {
     private String username;
     private String password;
     private String email;
+    private String requestToken;
+
     private String firstName;
     private String lastName;
-    private List<CartEntity> carts;
     private List<OrderEntity> orders;
+    private List<CartEntity> carts;
 }

@@ -1,4 +1,5 @@
 package com.techie.ecommerce.domain.model;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,29 +13,22 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity
-@Table(name = "order_items")
-public class OrderItemEntity {
+@Entity(name = "cart_items")
+
+public class CartItemEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
-    private OrderEntity order;
+    @JoinColumn(name = "cart_id")
+    private CartEntity cart;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
     private ProductEntity product;
 
     private int quantity;
-
     private double price;
-    public OrderItemEntity(ProductEntity product, int quantity, double price) {
-        this.product = product;
-        this.quantity = quantity;
-        this.price = price;
-    }
-
 }

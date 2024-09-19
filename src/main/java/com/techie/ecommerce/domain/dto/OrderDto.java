@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -19,6 +20,8 @@ import java.util.List;
 public class OrderDto {
     private Long orderId;
     private UserEntity user;
-    private List<OrderItemEntity> orderItems;
-    private CartEntity cart;
+    private List<OrderItemDto> orderItems;
+    private Double totalPrice;
+    private String status;
+    private LocalDateTime createdAt;
 }

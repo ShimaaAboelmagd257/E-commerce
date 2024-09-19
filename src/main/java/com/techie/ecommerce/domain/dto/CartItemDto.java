@@ -1,8 +1,6 @@
 package com.techie.ecommerce.domain.dto;
 
-import com.techie.ecommerce.domain.model.OrderEntity;
 import com.techie.ecommerce.domain.model.ProductEntity;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,10 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OrderItemDto {
+
+public class CartItemDto {
     private Long id;
-    private OrderDto order;
-    private ProductDto product;
+    private Long productId;
     private int quantity;
     private double price;
 }

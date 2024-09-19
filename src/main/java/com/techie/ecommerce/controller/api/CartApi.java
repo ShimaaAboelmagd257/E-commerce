@@ -1,12 +1,14 @@
 package com.techie.ecommerce.controller.api;
 
 import com.techie.ecommerce.domain.dto.CartDto;
+import com.techie.ecommerce.domain.dto.CartItemDto;
 import com.techie.ecommerce.domain.dto.ProductDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 
 
 import java.util.List;
@@ -42,7 +44,7 @@ public interface CartApi {
             @ApiResponse(responseCode = "200", description = "Product successfully removed from cart"),
             @ApiResponse(responseCode = "404", description = "Cart or product not found")
     })
-    ResponseEntity<ProductDto> removeFromCart(Long cartId, Long productId);
+    ResponseEntity<ProductDto> removeFromCart(Long cartId, Integer productId);
 
     @Operation(
             summary = "Get cart item",
@@ -51,7 +53,7 @@ public interface CartApi {
             @ApiResponse(responseCode = "200", description = "Product successfully fetched from cart"),
             @ApiResponse(responseCode = "404", description = "Cart or product not found")
     })
-    ResponseEntity<ProductDto> getCartItem(Long cartId, Long productId);
+    ResponseEntity<ProductDto> getCartItem(Long cartId, Integer productId);
 
     @Operation(
             summary = "Get all cart items",
@@ -60,7 +62,7 @@ public interface CartApi {
             @ApiResponse(responseCode = "200", description = "Products successfully fetched from cart"),
             @ApiResponse(responseCode = "404", description = "Cart not found")
     })
-    ResponseEntity<List<ProductDto>> getCartItems(Long cartId);
+     ResponseEntity<List<CartItemDto>>getCartItems(Long cartId);
 
     @Operation(
             summary = "Remove all items from cart",
@@ -79,4 +81,13 @@ public interface CartApi {
             @ApiResponse(responseCode = "404", description = "Cart not found")
     })
     ResponseEntity<Double> getCartTotalPrice(Long cartId);
+
+    @Operation(
+            summary = "Check Inventory Before CheckOut",
+            description = "Check the availability of   all products in the cart identified by the provided cart ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Available products "),
+            @ApiResponse(responseCode = "404", description = "Cart not found")
+    })
+    ResponseEntity<String> checkInventoryBeforeCheckOut(@PathVariable Long cartId);
 }

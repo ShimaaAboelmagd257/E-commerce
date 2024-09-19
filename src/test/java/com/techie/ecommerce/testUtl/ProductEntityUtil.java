@@ -1,18 +1,16 @@
 package com.techie.ecommerce.testUtl;
 
-import com.techie.ecommerce.domain.model.CartEntity;
-import com.techie.ecommerce.domain.model.CategoryEntity;
-import com.techie.ecommerce.domain.model.OrderItemEntity;
-import com.techie.ecommerce.domain.model.ProductEntity;
+import com.techie.ecommerce.domain.model.*;
 
 import java.util.Arrays;
+import java.util.List;
 
 public final class ProductEntityUtil {
 
 
     public static ProductEntity productEntity() {
         return ProductEntity.builder()
-                    .cart(CartEntity.builder().cartId(1L).build()) // Example CartEntity
+                    .cart(List.of(CartItemEntity.builder().id(1L).build())) // Example CartEntity
                     .price(29.99)
                     .title("Sample Product")
                     .description("This is a sample product description.")

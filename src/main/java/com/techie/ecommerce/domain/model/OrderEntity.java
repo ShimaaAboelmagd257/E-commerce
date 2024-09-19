@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -26,8 +27,12 @@ public class OrderEntity {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItemEntity> orderItems;
 
-    @ManyToOne
+   /* @ManyToOne
     @JoinColumn(name = "cart_id")
-    private CartEntity cart;
+    private CartEntity cart;*/
+
+    private Double totalPrice;
+    private String status;
+    private LocalDateTime createdAt;
 
 }

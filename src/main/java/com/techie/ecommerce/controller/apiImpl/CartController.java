@@ -2,8 +2,10 @@ package com.techie.ecommerce.controller.apiImpl;
 
 import com.techie.ecommerce.controller.api.CartApi;
 import com.techie.ecommerce.domain.dto.CartDto;
+import com.techie.ecommerce.domain.dto.CartItemDto;
 import com.techie.ecommerce.domain.dto.ProductDto;
 import com.techie.ecommerce.domain.model.CartEntity;
+import com.techie.ecommerce.domain.model.CartItemEntity;
 import com.techie.ecommerce.domain.model.ProductEntity;
 import com.techie.ecommerce.mappers.Mapper;
 import com.techie.ecommerce.service.CartService;
@@ -27,50 +29,53 @@ public class CartController implements CartApi {
     @Autowired
     private Mapper<ProductEntity , ProductDto> productMapper;
 
+    @Autowired
+    private Mapper<CartItemEntity,CartItemDto> cartItemMapper;
     @Override
     @PostMapping
     public ResponseEntity<CartDto> createCart(@RequestBody CartDto cartDto){
         CartEntity cartEntity =cartMapper.mapFrom(cartDto);
-        CartEntity savedCart = cartService.save(cartEntity);
-        CartDto dto = cartMapper.mapTo(savedCart);
-        return new ResponseEntity<>(dto, HttpStatus.CREATED);
-    }
-    @Override
+        if(cartEntity.getCartId() == null){
+            CartEntity savedCart = cartService.save(cartEntity);
+            CartDto dto = cartMapper.mapTo(savedCart);
+            return new ResponseEntity<>(dto, HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    }    @Override
     @PostMapping(path = "/{cartId}/products")
     public ResponseEntity<CartDto> addToCart(@PathVariable Long cartId, @RequestBody ProductDto productDto){
-
         CartEntity updatedCart = cartService.addToCart(cartId, productDto);
         CartDto cartDto = cartMapper.mapTo(updatedCart);
         return new ResponseEntity<>(cartDto,HttpStatus.OK);
-
     }
 
     @Override
     @DeleteMapping(path = "/{cartId}/products/{productId}")
-    public ResponseEntity<ProductDto> removeFromCart(@PathVariable Long cartId, @PathVariable Long productId){
+    public ResponseEntity<ProductDto> removeFromCart(@PathVariable Long cartId, @PathVariable Integer productId){
         cartService.delete(cartId,productId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     @Override
     @GetMapping(path = "/{cartId}/products/{productId}")
-    public ResponseEntity<ProductDto> getCartItem (@PathVariable Long cartId , @PathVariable Long productId){
-        Optional<ProductEntity> productEntity = cartService.getCartItem(cartId , productId);
-        return productEntity.map( product -> {
-            ProductDto productDto = productMapper.mapTo(product);
+    public ResponseEntity<ProductDto> getCartItem (@PathVariable Long cartId , @PathVariable Integer productId){
+        Optional<CartItemEntity> cartItem = cartService.getCartItem(cartId , productId);
+        return cartItem.map(item -> {
+            ProductDto productDto = productMapper.mapTo(item.getProduct());
             return new ResponseEntity<>(productDto,HttpStatus.OK);
 
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
     @Override
     @GetMapping(path = "/{cartId}/products")
-    public ResponseEntity<List<ProductDto>> getCartItems(@PathVariable Long cartId){
-        List<ProductEntity> productEntities = cartService.getCartItems(cartId);
-        List<ProductDto>  productDtos = productEntities
+    public ResponseEntity<List<CartItemDto>> getCartItems(@PathVariable Long cartId){
+        List<CartItemEntity> cartItems = cartService.getCartItems(cartId);
+        List<CartItemDto> cartItemDtos = cartItems
                 .stream()
-                .map(productMapper::mapTo)
+                .map(cartItemMapper::mapTo)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(productDtos);
+        return ResponseEntity.ok(cartItemDtos);
     }
     @Override
     @DeleteMapping("/{cartId}/items")
@@ -83,6 +88,17 @@ public class CartController implements CartApi {
     public ResponseEntity<Double> getCartTotalPrice(@PathVariable Long cartId) {
         double total = cartService.getCartTotalPrice(cartId);
         return ResponseEntity.ok(total);
+    }
+    @Override
+    @GetMapping("/{cartId}/check-inventory")
+    public ResponseEntity<String> checkInventoryBeforeCheckOut(@PathVariable Long cartId){
+        boolean inventoryOk = cartService.checkInventoryBeforeCheckOut(cartId);
+        if (inventoryOk){
+            return ResponseEntity.ok("All products are available");
+        }else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("One or more Products are not Available");
+        }
+
     }
 
 }

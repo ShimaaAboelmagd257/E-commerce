@@ -1,8 +1,6 @@
 package com.techie.ecommerce.testUtl;
 
-import com.techie.ecommerce.domain.dto.CategoryDto;
-import com.techie.ecommerce.domain.dto.ProductCreation;
-import com.techie.ecommerce.domain.dto.ProductDto;
+import com.techie.ecommerce.domain.dto.*;
 import com.techie.ecommerce.domain.model.CartEntity;
 import com.techie.ecommerce.domain.model.OrderItemEntity;
 
@@ -27,7 +25,7 @@ public final class ProductDtoUtil {
     // Method to generate a sample ProductDto
     public static ProductDto createSampleProductDto() {
         return ProductDto.builder()
-                .id(RANDOM.nextInt(1000))
+                .productId(RANDOM.nextInt(1000))
                 .title("Sample Product")
                 .price(RANDOM.nextDouble() * 100)
                 .description("This is a sample product description.")
@@ -52,13 +50,13 @@ public final class ProductDtoUtil {
     }
 
     // Method to generate a sample OrderItemEntity (replace with actual fields)
-    public static OrderItemEntity createSampleOrderItemEntity() {
-        OrderItemEntity item = new OrderItemEntity();
+    public static OrderItemDto createSampleOrderItemEntity() {
+        OrderItemDto item = new OrderItemDto();
         return item;
     }
 
-    public static CartEntity createSampleCartEntity() {
-        CartEntity cart = new CartEntity();
+    public static CartItemDto createSampleCartEntity() {
+        CartItemDto cart = new CartItemDto();
         return cart;
     }
 }

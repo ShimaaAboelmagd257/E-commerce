@@ -25,11 +25,7 @@ public class ProductDto {
     private CategoryDto category;
     private List<String> images;
     private int quantity;
-    private List<OrderItemEntity> orderItems;
-    private CartEntity cart;
-   /* @JsonProperty("categoryId")
-    public Integer getCategoryId() {
-        return category != null ? category.getCategoryId() : null;
-    }*/
+    private List<OrderItemDto> orderItems;
+    private CartItemDto cart;
 
 }

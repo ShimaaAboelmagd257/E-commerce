@@ -2,11 +2,14 @@ package com.techie.ecommerce.service;
 
 import com.techie.ecommerce.domain.dto.ProductDto;
 import com.techie.ecommerce.domain.model.CartEntity;
+import com.techie.ecommerce.domain.model.CartItemEntity;
 import com.techie.ecommerce.domain.model.ProductEntity;
 import com.techie.ecommerce.repository.CartRepository;
 import com.techie.ecommerce.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,71 +25,97 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartEntity save(CartEntity cartEntity) {
+        if (cartEntity.getCartId() != null && cartRepository.existsById(cartEntity.getCartId())) {
+            throw new IllegalArgumentException("This cart id '" + cartEntity.getCartId() + "' is already taken.");
+        }
         return cartRepository.save(cartEntity);
     }
-
+    @Override
+    public Optional<CartEntity> findById(Long cartId){
+        return cartRepository.findById(cartId);
+    }
     @Override
     public CartEntity addToCart(Long cartId, ProductDto productDto) {
-        CartEntity cart = cartRepository.findById(cartId).orElse(null);
-        if(cart != null){
-            ProductEntity product = productRepository.findById(productDto.getId()).orElse(null);
-            if(product != null){
-                cart.getProductEntities().add(product);
+        CartEntity cart = cartRepository.findById(cartId).orElseThrow(()-> new  ResourceNotFoundException( "Cart Not Found"));
+            ProductEntity product = productRepository.findById(productDto.getId()).orElseThrow(()-> new  ResourceNotFoundException( "Product Not Found"));
+                CartItemEntity existedCartItem =cart.getCartItems().stream()
+                        .filter(item -> item.getProduct().getId().equals(product.getId()))
+                        .findFirst()
+                        .orElse(null);
+                if (existedCartItem != null){
+                    existedCartItem.setQuantity(existedCartItem.getQuantity()+1);
+                }else {
+                    CartItemEntity newCartItem = CartItemEntity.builder()
+                            .product(product)
+                            .cart(cart)
+                            .quantity(1).
+                            build();
+                    cart.getCartItems().add(newCartItem);
+                }
                 return cartRepository.save(cart);
-            }
-        }
-        return null;
     }
 
     @Override
-    public void delete(Long cartId, Long productId) {
-        CartEntity cart = cartRepository.findById(cartId).orElse(null);
-        if(cart != null){
-            List<ProductEntity> productEntities = cart.getProductEntities();
-            productEntities.removeIf(productEntity ->
-                    productEntity.getProductId().equals(productId));
+    public void delete(Long cartId, Integer productId) {
+        CartEntity cart = cartRepository.findById(cartId).orElseThrow(()-> new  ResourceNotFoundException( "Cart Not Found"));
+
+            List<CartItemEntity> cartItemEntities = cart.getCartItems();
+            cartItemEntities.removeIf(cartItem ->
+                    cartItem.getProduct().getId().equals(productId));
             cartRepository.save(cart);
-        }
+
     }
 
     @Override
-    public Optional<ProductEntity> getCartItem(Long cartId, Long productId) {
-        CartEntity cart = cartRepository.findById(cartId).orElse(null);
-        if (cart != null){
-            return cart.getProductEntities().stream()
-                    .filter(item -> item.getProductId().equals(productId))
+    public Optional<CartItemEntity> getCartItem(Long cartId, Integer productId) {
+        CartEntity cart = cartRepository.findById(cartId).orElseThrow(()-> new  ResourceNotFoundException( "Cart Not Found"));
+            return cart.getCartItems().stream()
+                    .filter(item -> item.getProduct().getId().equals(productId))
                     .findFirst();
-        }
-        return Optional.empty();
+
     }
 
     @Override
-    public List<ProductEntity> getCartItems(Long cartId) {
-        CartEntity cart = cartRepository.findById(cartId).orElse(null);
-        if (cart != null){
-            return cart.getProductEntities();
-        }
-            return List.of();
+    public List<CartItemEntity> getCartItems(Long cartId) {
+        CartEntity cart = cartRepository.findById(cartId).orElseThrow(()-> new  ResourceNotFoundException( "Cart Not Found"));
+
+            return cart.getCartItems();
+
     }
 
     @Override
     public void removeAllCartItems(Long cartId) {
-        CartEntity cart = cartRepository.findById(cartId).orElse(null);
-        if (cart != null){
-            cart.getProductEntities().clear();
-            cartRepository.save(cart);
-        }
+        CartEntity cart = cartRepository.findById(cartId).orElseThrow(()-> new  ResourceNotFoundException( "Cart Not Found"));
 
+            cart.getCartItems().clear();
+            cartRepository.save(cart);
     }
 
     @Override
     public double getCartTotalPrice(Long cartId) {
-        CartEntity cart = cartRepository.findById(cartId).orElse(null);
-        if (cart != null){
-            return cart.getProductEntities().stream().mapToDouble(item -> item.getPrice() * item.getQuantity())
-                    .sum();
-        }
 
-            return 0.0;
+        CartEntity cart = cartRepository.findById(cartId).orElseThrow(()-> new  ResourceNotFoundException( "Cart Not Found"));
+
+        return cart.getCartItems().stream()
+                .mapToDouble(cartItem -> {
+                    ProductEntity entity = cartItem.getProduct();
+                    return entity.getPrice() * cartItem.getQuantity();
+                })
+                .sum();
+
+
     }
+    @Override
+    public boolean checkInventoryBeforeCheckOut(Long cartId) {
+        CartEntity cart = cartRepository.findById(cartId).orElseThrow(()-> new NotFoundException("Cart not found"));
+         for (CartItemEntity item:cart.getCartItems()){
+             ProductEntity entity = productRepository.findById(item.getProduct().getId()).orElseThrow(()-> new NotFoundException("Product not found"));
+             if (entity.getQuantity() < item.getQuantity()){
+                 return false;
+             }
+         }
+       return true;
+
+    }
+
 }
