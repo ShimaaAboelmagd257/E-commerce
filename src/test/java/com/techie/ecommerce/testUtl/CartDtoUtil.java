@@ -54,7 +54,7 @@ public class CartDtoUtil {
     public static CartEntity createCartEntity() {
         CartItemEntity cartItemEntity = new CartItemEntity();
         cartItemEntity.setId(1L);
-        cartItemEntity.getProduct().setProductId(100);
+        cartItemEntity.getProduct().setId(100);
         cartItemEntity.setQuantity(2);
         cartItemEntity.setPrice(50.0);
 
@@ -69,7 +69,7 @@ public class CartDtoUtil {
     public static CartEntity createSavedCartEntity() {
         CartItemEntity cartItemEntity = new CartItemEntity();
         cartItemEntity.setId(1L);
-        cartItemEntity.getProduct().setProductId(100);
+        cartItemEntity.getProduct().setId(100);
         cartItemEntity.setQuantity(2);
         cartItemEntity.setPrice(50.0);
 

@@ -11,3 +11,9 @@ paypal:
    client-id: AeOAcY-YgHDfiLsAM7qqCSA8jyXlk_BNgHfeNC6NgktEbEX8Zb-HiRJqVqq26kKKfVqn6e0q8YHQDSzZ
    client-secret: EKkHGiluv2LGHjlUwXNE_UrQpAvf73Z4FZLNTS90IPngRGtqDns7C0Mm7Tns2rh8VttglPKQhx7aUbIC
    mode: sandbox
+
+
+shippo:
+  api:
+    key: shippo_test_aa239868530f0b9888ea12a69f9786b1e9adc1f0
+    url: https://api.goshippo.com

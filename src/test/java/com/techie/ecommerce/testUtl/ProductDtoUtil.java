@@ -25,7 +25,7 @@ public final class ProductDtoUtil {
     // Method to generate a sample ProductDto
     public static ProductDto createSampleProductDto() {
         return ProductDto.builder()
-                .productId(RANDOM.nextInt(1000))
+                .id(RANDOM.nextInt(1000))
                 .title("Sample Product")
                 .price(RANDOM.nextDouble() * 100)
                 .description("This is a sample product description.")
