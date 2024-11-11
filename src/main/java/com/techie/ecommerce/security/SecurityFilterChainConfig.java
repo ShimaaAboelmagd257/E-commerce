@@ -47,6 +47,7 @@ public class SecurityFilterChainConfig   {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/payment/**").permitAll()
+                                .requestMatchers("/api/shipments/**").permitAll()
                                 .requestMatchers("/swagger-ui/**").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
                                 .requestMatchers("/api/auth/login").permitAll()

@@ -11,6 +11,7 @@
 	<groupId>com.techie</groupId>
 	<artifactId>ecommerce</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
 	<name>ecommerce</name>
 	<description>E-commerce backend project </description>
 	<url/>
@@ -20,6 +21,16 @@
 	<developers>
 		<developer/>
 	</developers>
+	<modules>
+		<module>category-service</module>
+		<module>product-service</module>
+		<module>cart-service</module>
+		<module>pamyent-service</module>
+		<module>checkout-service</module>
+		<module>order-service</module>
+		<module>user-service</module>
+		<module>shipping-service</module>
+	</modules>
 	<scm>
 		<connection/>
 		<developerConnection/>
@@ -38,7 +49,16 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-inline</artifactId>
+			<version>4.0.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
