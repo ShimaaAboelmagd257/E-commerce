@@ -1,10 +1,16 @@
 # E-commerce Backend Application
 
+
 ## Overview
 This is the backend of an E-commerce application built using Spring Boot. It provides RESTful APIs for managing users, products, carts, orders, and payments. The project is designed with a focus on scalability, security, and ease of use.
 
 ## Features
+- **Microservices Architecture:**
+  - The application is structured into distinct services, each responsible for a specific functionality such as user management, product catalog, cart, and order processing.
 
+- **Kafka for Event-Driven Communication:**
+ - Kafka is used to enable seamless asynchronous communication between services (e.g., product updates, inventory checks).
+ - 
 - **User Management:**
   - Registration, login, and profile management for users.
 
@@ -51,6 +57,8 @@ This is the backend of an E-commerce application built using Spring Boot. It pro
 - **Spring Boot**
 - **Spring Data JPA**
 - **Spring Security with JWT**
+- **Kafka** (for asynchronous inter-service communication)
+- **Pagination** (for API responses, especially in product listings)
 - **PostgreSQL**
 - **Maven**
 - **Docker** (for environment setup)
@@ -62,6 +70,7 @@ This is the backend of an E-commerce application built using Spring Boot. It pro
 - Java 17
 - Maven
 - PostgreSQL
+- kafka
 - Docker (optional)
 
 ### Contributing
@@ -70,3 +79,4 @@ Contributions are welcome! Please open an issue or submit a pull request for any
 License
 
 ### For any inquiries or feedback, please reach out to shimaaaboelmagd257@gmail.com
+
