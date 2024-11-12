@@ -20,11 +20,11 @@ public class UserDetailsServiceConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
+    }/*
     @Bean
     public UserDetailsService userDetailsService() {
         return new CustomUserDetailsService(); // or return the bean from the context
-    }
+    }*/
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
@@ -33,7 +33,7 @@ public class UserDetailsServiceConfig {
     @Lazy
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService());
+       // provider.setUserDetailsService(userDetailsService());
         provider.setPasswordEncoder(passwordEncoder());
         log.info("authenticationProvider"  );
         return provider;

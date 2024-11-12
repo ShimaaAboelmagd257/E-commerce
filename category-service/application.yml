@@ -5,4 +5,4 @@ spring:
     password: password
 
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: e-commerce-kafka:9092
