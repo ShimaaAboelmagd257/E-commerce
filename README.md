@@ -9,8 +9,8 @@ This is the backend of an E-commerce application built using Spring Boot. It pro
   - The application is structured into distinct services, each responsible for a specific functionality such as user management, product catalog, cart, and order processing.
 
 - **Kafka for Event-Driven Communication:**
- - Kafka is used to enable seamless asynchronous communication between services (e.g., product updates, inventory checks).
- - 
+  - Kafka is used to enable seamless asynchronous communication between services (e.g., product updates, inventory checks).
+      
 - **User Management:**
   - Registration, login, and profile management for users.
 
