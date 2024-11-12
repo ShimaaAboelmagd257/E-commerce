@@ -28,3 +28,8 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+          - ecommerce-network
+networks:
+  ecommerce-network:
+    driver: bridge

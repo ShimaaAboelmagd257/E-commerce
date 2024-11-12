@@ -184,14 +184,13 @@ public class ProductServiceImpl implements ProductService {
 
     @KafkaListener(topics = PRODUCT_REQUEST_TOPIC, groupId = "product-group")
     public void handleProductRequest(int productId) {
-        ProductEntity product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        ProductDto product = fetchProductById(productId);
          ProductResponse productResponse = new ProductResponse(
                 product.getId(),
                 product.getTitle(),
                 product.getPrice()
         );
-        kafkaTemplate.send(PRODUCT_RESPONSE_TOPIC, product);
+        kafkaTemplate.send(PRODUCT_RESPONSE_TOPIC, productResponse);
     }
 
 

@@ -78,45 +78,43 @@ public class CartServiceImpl implements CartService {
         // Fetch cart by ID
         CartEntity cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
+
         CompletableFuture<ProductResponse> productFuture = new CompletableFuture<>();
         productFutureMap.put(productId, productFuture);
-        // Send productId to Product Service to request product details
+
         kafkaTemplate.send(PRODUCT_REQUEST_TOPIC, productId);
-        ProductResponse productResponse = productFuture.join();
-        CompletableFuture<ProductResponse> removed = productFutureMap.remove(productResponse.getProductId());
-        if (removed != null) {
-            removed.complete(productResponse);
-        }
-        // Assume the product details will be processed asynchronously through Kafka Listener
-        return cart;  // Kafka Listener will handle the rest of the logic when the response is received
+        productFuture.thenAccept(productResponse -> {
+            CartItemEntity existedCartItem = cart.getCartItems().stream()
+                    .filter(item -> item.getProduct().getProductId().equals(productResponse.getProductId()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (existedCartItem != null) {
+                existedCartItem.setQuantity(existedCartItem.getQuantity() + 1);
+            } else {
+                CartItemEntity newCartItem = CartItemEntity.builder()
+                        .product(productResponse)
+                        .cart(cart)
+                        .quantity(1).
+                        build();
+                cart.getCartItems().add(newCartItem);
+            }
+            cartRepository.save(cart);
+        }).exceptionally(ex ->{
+            ex.printStackTrace();
+            return null;
+        });
+        return cart;
+
     }
 
-    //    public void requestProductData(Long productId) {
-//        kafkaTemplate.send(PRODUCT_REQUEST_TOPIC, productId);
-//    }
     // @Override
     @KafkaListener(topics = PRODUCT_RESPONSE_TOPIC, groupId = "cart-group")
     public void handleProductResponse(ProductResponse productResponse, Long cartId) {
-        CartEntity cart = cartRepository.findById(cartId).orElseThrow(() -> new ResourceNotFoundException("Cart Not Found"));
-        //     ProductEntity product = productRepository.findById(productDto.getId()).orElseThrow(()-> new  ResourceNotFoundException( "Product Not Found"));
-        //  kafkaTemplate.send(PRODUCT_REQUEST_TOPIC, productId);
-
-        CartItemEntity existedCartItem = cart.getCartItems().stream()
-                .filter(item -> item.getProduct().getProductId().equals(productResponse.getProductId()))
-                .findFirst()
-                .orElse(null);
-
-        if (existedCartItem != null) {
-            existedCartItem.setQuantity(existedCartItem.getQuantity() + 1);
-        } else {
-            CartItemEntity newCartItem = CartItemEntity.builder()
-                    .product(productResponse)
-                    .cart(cart)
-                    .quantity(1).
-                    build();
-            cart.getCartItems().add(newCartItem);
-        }
-        cartRepository.save(cart);
+      CompletableFuture<ProductResponse> completableFuture = productFutureMap.remove(productResponse);
+      if (completableFuture != null){
+          completableFuture.complete(productResponse);
+      }
     }
 
   /*  @Override

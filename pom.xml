@@ -30,6 +30,8 @@
 		<module>order-service</module>
 		<module>user-service</module>
 		<module>shipping-service</module>
+        <module>review-service</module>
+		<module>security-service</module>
 	</modules>
 	<scm>
 		<connection/>
@@ -76,6 +78,11 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
