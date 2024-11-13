@@ -1,4 +1,3 @@
-LABEL authors="shima"
 
 
 FROM openjdk:17-jdk-slim
