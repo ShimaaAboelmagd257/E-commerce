@@ -6,7 +6,10 @@ import com.techie.repository.ProductRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -26,13 +29,14 @@ import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductService {
+    private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
+
     private static final Log log = LogFactory.getLog(ProductServiceImpl.class);
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
 
-    private static final String PRODUCT_REQUEST_TOPIC = "product-request";
-    private static final String PRODUCT_RESPONSE_TOPIC = "product-response";
-
+    @Value("${kafka.topic.product-response}")
+    private String productResponseTopic;
 
 
     private static final String TOPIC = "cart-events";
@@ -182,15 +186,18 @@ public class ProductServiceImpl implements ProductService {
         return new PageImpl<>(productDtos,PageRequest.of(page,size),200);
     }
 
-    @KafkaListener(topics = PRODUCT_REQUEST_TOPIC, groupId = "product-group")
+    @KafkaListener(topics = "${kafka.topic.product-request}", groupId = "${spring.kafka.consumer.group-id}")
     public void handleProductRequest(int productId) {
+        logger.info("Received product request for productId {}", productId);
         ProductDto product = fetchProductById(productId);
          ProductResponse productResponse = new ProductResponse(
                 product.getId(),
                 product.getTitle(),
                 product.getPrice()
         );
-        kafkaTemplate.send(PRODUCT_RESPONSE_TOPIC, productResponse);
+        kafkaTemplate.send(productResponseTopic, productResponse);
+        logger.info("Sending productId to topic {}: {}", productResponseTopic, productId);
+
     }
 
 

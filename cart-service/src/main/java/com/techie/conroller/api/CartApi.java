@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Tag(name = "Cart-service", description = "the Cart API")
 public interface CartApi {
@@ -33,7 +34,7 @@ public interface CartApi {
             @ApiResponse(responseCode = "404", description = "Cart not found"),
             @ApiResponse(responseCode = "400", description = "Invalid input")
     })
-    ResponseEntity<CartDto> addToCart(Long cartId,Long productId);
+    CompletableFuture<ResponseEntity<CartDto>> addToCart(Long cartId, Integer productId);
 
 //    @Operation(
 //            summary = "Remove product from cart",

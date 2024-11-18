@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://db:5432/ecommerce_database
+    url: jdbc:postgresql://localhost:5432/ecommerce_database
     username: ecommerce
     password: password
-
+    driver-class-name: org.postgresql.Driver
   kafka:
     bootstrap-servers: e-commerce-kafka:9092

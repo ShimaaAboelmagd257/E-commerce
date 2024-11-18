@@ -3,9 +3,11 @@ package com.techie.service;
 
 import com.techie.domain.CartEntity;
 import com.techie.domain.CartItemEntity;
+import com.techie.domain.ProductResponse;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public interface CartService {
 
@@ -13,7 +15,7 @@ public interface CartService {
 
     Optional<CartEntity> findById(Long cartId);
 
-    //CartEntity addToCart(Long cartId, ProductDto productDto);
+    //CartEntity requestProductInfo(Long cartId, ProductDto productDto);
 
     void delete(Long cartId, Integer productId);
 
@@ -27,5 +29,7 @@ public interface CartService {
 
     boolean checkInventoryBeforeCheckOut(Long cartId);
 
-    CartEntity addToCart(Long cartId, Long productId);
+    CompletableFuture<CartEntity> requestProductInfo(Long cartId, Integer productId);
+
+    void handleProductResponse(ProductResponse productResponse, Long cartId);
 }

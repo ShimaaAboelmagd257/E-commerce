@@ -4,7 +4,10 @@ import com.techie.domain.CartEntity;
 import com.techie.domain.CartItemEntity;
 import com.techie.domain.ProductResponse;
 import com.techie.repository.CartRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -18,17 +21,17 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class CartServiceImpl implements CartService {
+    private static final Logger logger = LoggerFactory.getLogger(CartService.class);
 
     @Autowired
     private CartRepository cartRepository;
 
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
+    private final Map<Integer, CompletableFuture<ProductResponse>> productFutureMap = new ConcurrentHashMap<>();
 
-    private Map<Long , CompletableFuture<ProductResponse>> productFutureMap  = new ConcurrentHashMap<>();
-
-    private static final String PRODUCT_REQUEST_TOPIC = "product-request";
-    private static final String PRODUCT_RESPONSE_TOPIC = "product-response";
+    @Value("${kafka.topic.product-request}")
+    private String productRequestTopic;
 
     @Override
     public CartEntity save(CartEntity cartEntity) {
@@ -74,46 +77,63 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartEntity addToCart(Long cartId, Long productId) {
+    public CompletableFuture<CartEntity> requestProductInfo(Long cartId, Integer productId) {
         // Fetch cart by ID
         CartEntity cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
 
+        // Create and store a CompletableFuture for the product response
         CompletableFuture<ProductResponse> productFuture = new CompletableFuture<>();
         productFutureMap.put(productId, productFuture);
 
-        kafkaTemplate.send(PRODUCT_REQUEST_TOPIC, productId);
-        productFuture.thenAccept(productResponse -> {
-            CartItemEntity existedCartItem = cart.getCartItems().stream()
+        // Send the product request to Kafka
+        kafkaTemplate.send(productRequestTopic, productId);
+        logger.info("Sending productId to topic {}: {}", productRequestTopic, productId);
+
+        // Chain the CompletableFuture to process the product response and update the cart
+        return productFuture.thenApply(productResponse -> {
+            // Check if the product already exists in the cart
+            CartItemEntity existingCartItem = cart.getCartItems().stream()
                     .filter(item -> item.getProduct().getProductId().equals(productResponse.getProductId()))
                     .findFirst()
                     .orElse(null);
 
-            if (existedCartItem != null) {
-                existedCartItem.setQuantity(existedCartItem.getQuantity() + 1);
+            if (existingCartItem != null) {
+                // Increment quantity if the product already exists
+                existingCartItem.setQuantity(existingCartItem.getQuantity() + 1);
             } else {
+                // Add new product to the cart
                 CartItemEntity newCartItem = CartItemEntity.builder()
                         .product(productResponse)
                         .cart(cart)
-                        .quantity(1).
-                        build();
+                        .quantity(1)
+                        .build();
                 cart.getCartItems().add(newCartItem);
             }
-            cartRepository.save(cart);
-        }).exceptionally(ex ->{
-            ex.printStackTrace();
-            return null;
-        });
-        return cart;
 
+            // Save the updated cart to the repository
+            cartRepository.save(cart);
+
+            // Return the updated cart
+            return cart;
+        }).exceptionally(ex -> {
+            // Log the exception
+            logger.error("Failed to process product response for cartId {} and productId {}", cartId, productId, ex);
+
+            // Throw a custom exception instead of returning null
+            throw new RuntimeException("Failed to update cart", ex);
+        });
     }
 
-    // @Override
-    @KafkaListener(topics = PRODUCT_RESPONSE_TOPIC, groupId = "cart-group")
+    @Override
+    @KafkaListener(topics = "${kafka.topic.product-response}", groupId = "${spring.kafka.consumer.group-id}")
     public void handleProductResponse(ProductResponse productResponse, Long cartId) {
+        logger.info("Received product response: {}", productResponse);
       CompletableFuture<ProductResponse> completableFuture = productFutureMap.remove(productResponse);
       if (completableFuture != null){
           completableFuture.complete(productResponse);
+      }else {
+          logger.warn("No CompletableFuture found for productId {}", productResponse.getProductId());
       }
     }
 

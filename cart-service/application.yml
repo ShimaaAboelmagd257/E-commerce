@@ -1,8 +1,30 @@
+server:
+  port: 8081
+
 spring:
   datasource:
-    url: jdbc:postgresql://db:5432/ecommerce_database
+    url: jdbc:postgresql://localhost:5432/ecommerce_database
     username: ecommerce
     password: password
+    driver-class-name: org.postgresql.Driver
+
 
   kafka:
     bootstrap-servers: e-commerce-kafka:9092
+    consumer:
+      group-id: cart-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    admin:
+      auto-create-topics: true # Automatically create topics if not already present
+
+kafka:
+  topic:
+    product-request: product_request_topic
+    product-response: product_response_topic
+
+spring.kafka.admin.auto-create-topics: true

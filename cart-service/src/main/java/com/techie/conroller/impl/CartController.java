@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @RestController
@@ -25,7 +27,7 @@ public class CartController implements CartApi {
     private Mapper<CartEntity, CartDto> cartMapper;
    /* @Autowired
     private Mapper<ProductEntity , ProductDto> productMapper;*/
-
+   private static final Logger logger = LoggerFactory.getLogger(CartService.class);
     @Autowired
     private Mapper<CartItemEntity, CartItemDto> cartItemMapper;
     @Override
@@ -42,10 +44,15 @@ public class CartController implements CartApi {
     }
     @Override
     @PostMapping(path = "/{cartId}/products")
-    public ResponseEntity<CartDto> addToCart(@PathVariable Long cartId, @RequestBody Long productId){
-        CartEntity updatedCart = cartService.addToCart(cartId, productId);
-        CartDto cartDto = cartMapper.mapTo(updatedCart);
-        return new ResponseEntity<>(cartDto,HttpStatus.OK);
+    public CompletableFuture<ResponseEntity<CartDto>> addToCart(@PathVariable Long cartId, @RequestBody Integer productId) {
+        return cartService.requestProductInfo(cartId, productId)
+                .thenApply(cartEntity -> {
+                    CartDto cartDto = cartMapper.mapTo(cartEntity); // Assuming `cartMapper` maps `CartEntity` to `CartDto`
+                    return ResponseEntity.ok(cartDto);
+                }).exceptionally(ex -> {
+                    logger.info("Sending productId to topic {}: {}", "PRODUCT_REQUEST_TOPIC", productId);
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                });
     }
 
    /* @Override
