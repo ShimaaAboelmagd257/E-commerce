@@ -20,13 +20,14 @@ public class ProductController implements ProductApi {
 
     private final Mapper<ProductEntity, ProductDto> mapper;
     private final Mapper<ProductCreationEntity, ProductCreation> creationMapper;
-    private final ProductService service;
+    @Autowired
+    private  ProductService service;
 
     @Autowired
-    public ProductController(Mapper<ProductEntity, ProductDto> mapper, Mapper<ProductCreationEntity, ProductCreation> creationMapper, ProductService service) {
+    public ProductController(Mapper<ProductEntity, ProductDto> mapper, Mapper<ProductCreationEntity, ProductCreation> creationMapper) {
         this.mapper = mapper;
         this.creationMapper = creationMapper;
-        this.service = service;
+     //   this.service = service;
     }
 
     @Override

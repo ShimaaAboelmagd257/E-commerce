@@ -21,6 +21,7 @@ public class AppConfig {
 
         return modelMapper;
     }
+
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder){
         return restTemplateBuilder.build();

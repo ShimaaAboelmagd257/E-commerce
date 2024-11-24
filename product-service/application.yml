@@ -2,12 +2,9 @@
 server:
   port: 8086 # Port for the Product Service
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/ecommerce_database
-    username: ecommerce
-    password: password
-    driver-class-name: org.postgresql.Driver
+
   kafka:
+
     bootstrap-servers: e-commerce-kafka:9092
     consumer:
       group-id: product-service-group
@@ -20,9 +17,4 @@ spring:
     admin:
       auto-create-topics: true # Automatically create topics if not already present
 
-kafka:
-  topic:
-    product-request: product_request_topic
-    product-response: product_response_topic
 
-spring.kafka.admin.auto-create-topics: true

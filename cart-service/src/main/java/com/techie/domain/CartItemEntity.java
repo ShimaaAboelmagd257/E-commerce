@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity(name = "cart_items")
-
+@Table(name = "cart_items")
+@Entity
 public class CartItemEntity {
 
     @Id
@@ -25,7 +25,7 @@ public class CartItemEntity {
    // private  Long productId;
     @ManyToOne
     @JoinColumn(name = "product_id")
-    private ProductResponse product;
+    private ProductEntity product;
 
     private int quantity;
     private double price;

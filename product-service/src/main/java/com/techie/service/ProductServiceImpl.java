@@ -5,11 +5,10 @@ import com.techie.repository.ProductCreateRepository;
 import com.techie.repository.ProductRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -35,7 +34,7 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
 
-    @Value("${kafka.topic.product-response}")
+   // @Value("${kafka.topic.product-response}")
     private String productResponseTopic;
 
 
@@ -48,8 +47,8 @@ public class ProductServiceImpl implements ProductService {
     private final String apiUrl = "https://api.escuelajs.co/api/v1/products";
 
 
-
-    @Autowired
+    @Lazy
+   @Autowired
     public ProductServiceImpl(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
@@ -186,7 +185,7 @@ public class ProductServiceImpl implements ProductService {
         return new PageImpl<>(productDtos,PageRequest.of(page,size),200);
     }
 
-    @KafkaListener(topics = "${kafka.topic.product-request}", groupId = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = "${spring.kafka.topic.product-request}", groupId = "${spring.kafka.producer.group-id}")
     public void handleProductRequest(int productId) {
         logger.info("Received product request for productId {}", productId);
         ProductDto product = fetchProductById(productId);

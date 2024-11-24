@@ -10,9 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 
-public class ProductResponse {
+public class ProductRequestEvent {
+    private String eventId;
+    private Long cartItemId;
     private Integer productId;
-    private String productName;
-    private double productPrice;
-    private Integer quantity;
 }

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @RestController
@@ -44,15 +43,11 @@ public class CartController implements CartApi {
     }
     @Override
     @PostMapping(path = "/{cartId}/products")
-    public CompletableFuture<ResponseEntity<CartDto>> addToCart(@PathVariable Long cartId, @RequestBody Integer productId) {
-        return cartService.requestProductInfo(cartId, productId)
-                .thenApply(cartEntity -> {
-                    CartDto cartDto = cartMapper.mapTo(cartEntity); // Assuming `cartMapper` maps `CartEntity` to `CartDto`
-                    return ResponseEntity.ok(cartDto);
-                }).exceptionally(ex -> {
-                    logger.info("Sending productId to topic {}: {}", "PRODUCT_REQUEST_TOPIC", productId);
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-                });
+    public ResponseEntity<Void> addToCart(@PathVariable Long cartId, @RequestBody Integer productId) {
+         cartService.addToCart(cartId, productId);
+         //CartDto cartDto = cartMapper.mapTo(cartEntity);
+        return ResponseEntity.noContent().build();
+
     }
 
    /* @Override
@@ -94,7 +89,7 @@ public class CartController implements CartApi {
         double total = cartService.getCartTotalPrice(cartId);
         return ResponseEntity.ok(total);
     }
-    @Override
+    /*@Override
     @GetMapping("/{cartId}/check-inventory")
     public ResponseEntity<String> checkInventoryBeforeCheckOut(@PathVariable Long cartId){
         boolean inventoryOk = cartService.checkInventoryBeforeCheckOut(cartId);
@@ -104,6 +99,6 @@ public class CartController implements CartApi {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("One or more Products are not Available");
         }
 
-    }
+    }*/
 
 }
